@@ -10,3 +10,4 @@ edition = "2018"
 gamestate = {git = "https://github.com/horup/gamestate-rs.git", branch = "main"}
 ggez = "0.5"
 cgmath = "0.17.0"
+image = "0.23.10"

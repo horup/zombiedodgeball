@@ -19,7 +19,14 @@ struct ZombieDodgeBall {
 }
 
 impl ZombieDodgeBall {
-    pub fn new(_ctx: &mut Context) -> ZombieDodgeBall {
+    pub fn new(ctx: &mut Context) -> ZombieDodgeBall {
+        let bytes = include_bytes!("./resources/spritesheet.png");
+        let img = image::load_from_memory(bytes).unwrap();
+        
+        let img = img.to_rgba();
+        let img = graphics::Image::from_rgba8(ctx, img.width() as u16, img.height() as u16, &img).unwrap();
+
+
         ZombieDodgeBall {
 		    current: State::new()
 		}

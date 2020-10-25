@@ -113,7 +113,7 @@ dependencies = [
  "addr2line",
  "cfg-if 1.0.0",
  "libc",
- "miniz_oxide",
+ "miniz_oxide 0.4.3",
  "object",
  "rustc-demangle",
 ]
@@ -184,6 +184,12 @@ name = "bytecount"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b92204551573580e078dc80017f36a213eb77a0450e4ddd8cfa0f3f2d1f0178f"
+
+[[package]]
+name = "bytemuck"
+version = "1.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "41aa2ec95ca3b5c54cf73c91acf06d24f4495d5f1b1c12506ae3483d646177ac"
 
 [[package]]
 name = "byteorder"
@@ -321,6 +327,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d7b894f5411737b7867f4827955924d7c254fc9f4d91a6aad6b097804b1018b"
 
 [[package]]
+name = "const_fn"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce90df4c658c62f12d78f7508cf92f9173e5184a539c10bfe54a3107b3ffd0f2"
+
+[[package]]
 name = "constant_time_eq"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -407,14 +419,35 @@ dependencies = [
 ]
 
 [[package]]
+name = "crossbeam-channel"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dca26ee1f8d361640700bde38b2c37d8c22b3ce2d360e1fc1c74ea4b0aa7d775"
+dependencies = [
+ "cfg-if 1.0.0",
+ "crossbeam-utils 0.8.0",
+]
+
+[[package]]
 name = "crossbeam-deque"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f02af974daeee82218205558e51ec8768b48cf524bd01d550abe5573a608285"
 dependencies = [
- "crossbeam-epoch",
- "crossbeam-utils",
+ "crossbeam-epoch 0.8.2",
+ "crossbeam-utils 0.7.2",
  "maybe-uninit",
+]
+
+[[package]]
+name = "crossbeam-deque"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "94af6efb46fef72616855b036a624cf27ba656ffc9be1b9a3c931cfc7749a9a9"
+dependencies = [
+ "cfg-if 1.0.0",
+ "crossbeam-epoch 0.9.0",
+ "crossbeam-utils 0.8.0",
 ]
 
 [[package]]
@@ -425,9 +458,23 @@ checksum = "058ed274caafc1f60c4997b5fc07bf7dc7cca454af7c6e81edffe5f33f70dace"
 dependencies = [
  "autocfg 1.0.1",
  "cfg-if 0.1.10",
- "crossbeam-utils",
+ "crossbeam-utils 0.7.2",
  "lazy_static",
  "maybe-uninit",
+ "memoffset",
+ "scopeguard",
+]
+
+[[package]]
+name = "crossbeam-epoch"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec0f606a85340376eef0d6d8fec399e6d4a544d648386c6645eb6d0653b27d9f"
+dependencies = [
+ "cfg-if 1.0.0",
+ "const_fn",
+ "crossbeam-utils 0.8.0",
+ "lazy_static",
  "memoffset",
  "scopeguard",
 ]
@@ -444,10 +491,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "crossbeam-utils"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec91540d98355f690a86367e566ecad2e9e579f230230eb7c21398372be73ea5"
+dependencies = [
+ "autocfg 1.0.1",
+ "cfg-if 1.0.0",
+ "const_fn",
+ "lazy_static",
+]
+
+[[package]]
 name = "deflate"
 version = "0.7.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "707b6a7b384888a70c8d2e8650b3e60170dfc6a67bb4aa67b6dfca57af4bedb4"
+dependencies = [
+ "adler32",
+ "byteorder",
+]
+
+[[package]]
+name = "deflate"
+version = "0.8.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73770f8e1fe7d64df17ca66ad28994a0a623ea497fa69486e14984e715c5d174"
 dependencies = [
  "adler32",
  "byteorder",
@@ -503,6 +572,12 @@ checksum = "33cf9537e2d06891448799b96d5a8c8083e0e90522a7fdabe6ebf4f41d79d651"
 dependencies = [
  "bitflags",
 ]
+
+[[package]]
+name = "either"
+version = "1.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 
 [[package]]
 name = "error-chain"
@@ -656,7 +731,7 @@ dependencies = [
  "gilrs",
  "glutin",
  "glyph_brush 0.5.4",
- "image",
+ "image 0.22.5",
  "log",
  "lyon",
  "mint",
@@ -679,6 +754,16 @@ checksum = "471d90201b3b223f3451cd4ad53e34295f16a1df17b1edf3736d47761c3981af"
 dependencies = [
  "color_quant",
  "lzw",
+]
+
+[[package]]
+name = "gif"
+version = "0.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02efba560f227847cb41463a7395c514d127d4f74fff12ef0137fff1b84b96c4"
+dependencies = [
+ "color_quant",
+ "weezl",
 ]
 
 [[package]]
@@ -884,13 +969,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "08ed2ada878397b045454ac7cfb011d73132c59f31a955d230bd1f1c2e68eb4a"
 dependencies = [
  "byteorder",
- "gif",
+ "gif 0.10.3",
  "jpeg-decoder",
  "num-iter",
- "num-rational",
+ "num-rational 0.2.4",
  "num-traits 0.2.12",
- "png",
- "tiff",
+ "png 0.15.3",
+ "tiff 0.3.1",
+]
+
+[[package]]
+name = "image"
+version = "0.23.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "985fc06b1304d19c28d5c562ed78ef5316183f2b0053b46763a0b94862373c34"
+dependencies = [
+ "bytemuck",
+ "byteorder",
+ "gif 0.11.1",
+ "jpeg-decoder",
+ "num-iter",
+ "num-rational 0.3.0",
+ "num-traits 0.2.12",
+ "png 0.16.7",
+ "scoped_threadpool",
+ "tiff 0.5.0",
 ]
 
 [[package]]
@@ -925,6 +1028,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cc797adac5f083b8ff0ca6f6294a999393d76e197c36488e2ef732c4715f6fa3"
 dependencies = [
  "byteorder",
+ "rayon",
 ]
 
 [[package]]
@@ -1175,6 +1279,15 @@ dependencies = [
 
 [[package]]
 name = "miniz_oxide"
+version = "0.3.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "791daaae1ed6889560f8c4359194f56648355540573244a5448a83ba1ecc7435"
+dependencies = [
+ "adler32",
+]
+
+[[package]]
+name = "miniz_oxide"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0f2d26ec3309788e423cfbf68ad1800f061638098d76a83681af979dc4eda19d"
@@ -1201,7 +1314,7 @@ dependencies = [
  "matrixmultiply",
  "mint",
  "num-complex",
- "num-rational",
+ "num-rational 0.2.4",
  "num-traits 0.2.12",
  "rand 0.6.5",
  "typenum",
@@ -1296,6 +1409,17 @@ name = "num-rational"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c000134b5dbf44adc5cb772486d335293351644b801551abe8f75c84cfa4aef"
+dependencies = [
+ "autocfg 1.0.1",
+ "num-integer",
+ "num-traits 0.2.12",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a5b4d7360f362cfb50dde8143501e6940b22f644be75a4cc90b2d81968908138"
 dependencies = [
  "autocfg 1.0.1",
  "num-integer",
@@ -1425,8 +1549,20 @@ checksum = "ef859a23054bbfee7811284275ae522f0434a3c8e7f4b74bd4a35ae7e1c4a283"
 dependencies = [
  "bitflags",
  "crc32fast",
- "deflate",
+ "deflate 0.7.20",
  "inflate",
+]
+
+[[package]]
+name = "png"
+version = "0.16.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dfe7f9f1c730833200b134370e1d5098964231af8450bce9b78ee3ab5278b970"
+dependencies = [
+ "bitflags",
+ "crc32fast",
+ "deflate 0.8.6",
+ "miniz_oxide 0.3.7",
 ]
 
 [[package]]
@@ -1656,6 +1792,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "60a357793950651c4ed0f3f52338f53b2f809f32d83a07f72909fa13e4c6c1e3"
 
 [[package]]
+name = "rayon"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8b0d8e0819fadc20c74ea8373106ead0600e3a67ef1fe8da56e39b9ae7275674"
+dependencies = [
+ "autocfg 1.0.1",
+ "crossbeam-deque 0.8.0",
+ "either",
+ "rayon-core",
+]
+
+[[package]]
+name = "rayon-core"
+version = "1.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ab346ac5921dc62ffa9f89b7a773907511cdfa5490c572ae9be1be33e8afa4a"
+dependencies = [
+ "crossbeam-channel",
+ "crossbeam-deque 0.8.0",
+ "crossbeam-utils 0.8.0",
+ "lazy_static",
+ "num_cpus",
+]
+
+[[package]]
 name = "rdrand"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1729,7 +1890,7 @@ dependencies = [
  "base64",
  "blake2b_simd",
  "constant_time_eq",
- "crossbeam-utils",
+ "crossbeam-utils 0.7.2",
 ]
 
 [[package]]
@@ -1769,8 +1930,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f61411055101f7b60ecf1041d87fb74205fb20b0c7a723f07ef39174cf6b4c0"
 dependencies = [
  "approx",
- "crossbeam-deque",
- "crossbeam-utils",
+ "crossbeam-deque 0.7.3",
+ "crossbeam-utils 0.7.2",
  "linked-hash-map",
  "num_cpus",
  "ordered-float",
@@ -1803,6 +1964,12 @@ checksum = "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502"
 dependencies = [
  "winapi-util",
 ]
+
+[[package]]
+name = "scoped_threadpool"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d51f5df5af43ab3f1360b429fa5e0152ac5ce8c0bd6485cae490332e96846a8"
 
 [[package]]
 name = "scopeguard"
@@ -2086,6 +2253,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "tiff"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3f3b8a87c4da944c3f27e5943289171ac71a6150a79ff6bacfff06d159dfff2f"
+dependencies = [
+ "byteorder",
+ "lzw",
+ "miniz_oxide 0.3.7",
+]
+
+[[package]]
 name = "toml"
 version = "0.5.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2278,6 +2456,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "weezl"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8795d6e0e17485803cc10ef126bb8c0d59b7c61b219d66cfe0b3216dd0e8580a"
+
+[[package]]
 name = "winapi"
 version = "0.3.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2382,4 +2566,5 @@ dependencies = [
  "cgmath",
  "gamestate",
  "ggez",
+ "image 0.23.10",
 ]
