@@ -1,8 +1,10 @@
-use ggez::{Context, ContextBuilder, graphics::DrawParam, GameResult, graphics::{self, GlBackendSpec, ImageGeneric}};
+use ggez::{Context, ContextBuilder, GameResult, event::KeyCode, event::MouseButton, graphics::DrawParam, graphics::{self, GlBackendSpec, ImageGeneric}, input::{keyboard, mouse}, timer};
 use ggez::event::{self, EventHandler};
 mod state;
 use state::State;
-use ggez::context::*;
+
+mod render;
+
 pub fn main() {
     let (mut ctx, mut event_loop) = ContextBuilder::new("my_game", "Cool Game Author")
         .build()
@@ -30,7 +32,6 @@ impl ZombieDodgeBall {
         let spritesheet = img.to_rgba();
         let spritesheet = graphics::Image::from_rgba8(ctx, spritesheet.width() as u16, spritesheet.height() as u16, &spritesheet).unwrap();
 
-
         ZombieDodgeBall {
             current: State::new(),
             images: Images {
@@ -42,13 +43,23 @@ impl ZombieDodgeBall {
 
 impl EventHandler for ZombieDodgeBall {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let keyboard = &ctx.keyboard_context;
+      
+        let mut state = &mut self.current;
+        state.input.dpad.y += if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
+        state.input.dpad.y += if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {0.0};
+        state.input.dpad.x += if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
+        state.input.dpad.x += if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {0.0};
+        state.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
+        
+        if timer::check_update_time(ctx, 20){
+            state.update();
+        }
+
 		Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, graphics::BLACK);
-        graphics::draw(ctx,   &self.images.spritesheet, DrawParam::new())?;
-		graphics::present(ctx)
+        self.render(ctx)?;
+        Ok(())
     }
 }
