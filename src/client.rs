@@ -47,8 +47,6 @@ impl Client
         current.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {current.input.dpad.x};
         current.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
         
-
-        
         let remaining = timer::remaining_update_time(ctx);
         let alpha = remaining.as_secs_f32() as f32 * tick_rate_ps as f32;// / self.tick_rate_ps as f32;
         let current = &self.current;
@@ -61,7 +59,7 @@ impl Client
             y:0.0,
             w:size.0 / zoom,
             h:size.1 / zoom
-        });
+        })?;
         graphics::clear(ctx, graphics::BLACK);
 
         for (id, curr) in current.entities.iter()
