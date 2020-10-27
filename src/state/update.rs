@@ -1,12 +1,28 @@
-use super::State;
+use super::{Actor, State};
 
 impl State
 {
-    pub fn update(&mut self)
+    pub fn input_update(&mut self)
     {
+        let input = &self.input;
+        let v = input.dpad;
+        let speed = 0.2;
         for (id, e) in self.entities.iter_mut()
         {
-            e.pos.x += 0.1;
+            if let Actor::Player(player) = e.actor
+            {
+                e.vel = v * speed;
+                println!("{:?}", e.vel);
+            }
+        }
+
+    }
+    pub fn update(&mut self)
+    {
+        self.input_update();
+        for (id, e) in self.entities.iter_mut()
+        {
+            e.pos = e.pos + e.vel;
         }
     }
 }
