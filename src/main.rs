@@ -1,11 +1,20 @@
+use std::sync::mpsc;
+
 use ggez::{Context, ContextBuilder, GameResult, event::KeyCode, event::MouseButton, graphics::DrawParam, graphics::{self, GlBackendSpec, ImageGeneric}, input::{keyboard, mouse}, timer};
 use ggez::event::{self, EventHandler};
 mod state;
 use state::State;
 
 mod render;
+mod server;
+mod msg;
+pub use server::*;
+pub use msg::*;
 
 pub fn main() {
+
+    let server = Server::start(server_rx, client_tx);
+
     let (mut ctx, mut event_loop) = ContextBuilder::new("my_game", "Cool Game Author")
         .build()
 		.expect("aieee, could not create ggez context!");
@@ -14,6 +23,8 @@ pub fn main() {
         Ok(_) => println!("Exited cleanly."),
         Err(e) => println!("Error occured: {}", e)
     }
+
+    server.join().expect("could not join");
 }
 
 struct Images {
