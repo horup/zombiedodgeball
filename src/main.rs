@@ -21,7 +21,9 @@ struct Images {
 }
 struct ZombieDodgeBall {
     pub current:State,
-    pub images:Images
+    pub previous:State,
+    pub images:Images,
+    pub tick_rate_ps:u32
 }
 
 impl ZombieDodgeBall {
@@ -34,9 +36,11 @@ impl ZombieDodgeBall {
 
         ZombieDodgeBall {
             current: State::new(),
+            previous:State::new(),
             images: Images {
-                spritesheet:spritesheet
-            }
+                spritesheet:spritesheet,
+            },
+            tick_rate_ps:20
 		}
     }
 }
@@ -44,22 +48,26 @@ impl ZombieDodgeBall {
 impl EventHandler for ZombieDodgeBall {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
       
-        let mut state = &mut self.current;
-        state.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
-        state.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {state.input.dpad.y};
-        state.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
-        state.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {state.input.dpad.x};
-        state.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
+        let mut current = &mut self.current;
+        current.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
+        current.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {current.input.dpad.y};
+        current.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
+        current.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {current.input.dpad.x};
+        current.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
         
-        if timer::check_update_time(ctx, 10){
-            state.update();
+        if timer::check_update_time(ctx, self.tick_rate_ps){
+            self.previous = current.clone();
+            current.update();
         }
 
 		Ok(())
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        self.render(ctx)?;
+        let remaining = timer::remaining_update_time(ctx);
+        let alpha = remaining.as_secs_f32() as f32 * self.tick_rate_ps as f32;// / self.tick_rate_ps as f32;
+       
+        self.render(ctx, alpha)?;
         Ok(())
     }
 }

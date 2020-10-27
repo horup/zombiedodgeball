@@ -4,9 +4,9 @@ use crate::ZombieDodgeBall;
 
 impl ZombieDodgeBall 
 {
-    pub fn render(&mut self, ctx: &mut Context) -> GameResult<()>
+    pub fn render(&mut self, ctx: &mut Context, alpha:f32) -> GameResult<()>
     {
-        let state = &mut self.current;
+        let current = &self.current;
         let size = graphics::size(ctx);
         let zoom = 32.0;
         let sprite_size = 16.0;
@@ -18,7 +18,7 @@ impl ZombieDodgeBall
         })?;
         graphics::clear(ctx, graphics::BLACK);
 
-        for (id, e) in state.entities.iter_mut()
+        for (id, e) in current.entities.iter()
         {
             let mut params = DrawParam::new();
             params.dest.x = e.pos.x;

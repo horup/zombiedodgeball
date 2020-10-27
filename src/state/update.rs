@@ -12,7 +12,6 @@ impl State
             if let Actor::Player(player) = e.actor
             {
                 e.vel = v * speed;
-                println!("{:?}", e.vel);
             }
         }
 

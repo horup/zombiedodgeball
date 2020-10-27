@@ -640,7 +640,7 @@ checksum = "a06f77d526c1a601b7c4cdd98f54b5eaabffc14d5f2f0296febdc7f357c6d3ba"
 [[package]]
 name = "gamestate"
 version = "0.1.0"
-source = "git+https://github.com/horup/gamestate-rs.git?branch=main#f9af97ee0e3a140e906186d282a1ddef529b6985"
+source = "git+https://github.com/horup/gamestate-rs.git?branch=main#edccfe0169b00f9a670f96a3334200529834399b"
 
 [[package]]
 name = "generic-array"

@@ -9,6 +9,7 @@ mod update;
 
 
 
+#[derive(Clone)]
 pub struct State {
     pub entities:gamestate::Entities<Entity>,
     pub input:Input
