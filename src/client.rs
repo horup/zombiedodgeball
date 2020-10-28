@@ -39,7 +39,7 @@ impl Default for Input
 
 pub struct ClientData
 {
-    pub position:Vector2<f32>,
+    pub vel:Vector2<f32>,
     pub shoot:bool,
     pub client_id:u128
 }
@@ -83,7 +83,7 @@ impl Client
     pub fn update_player(&mut self, delta:f32) -> ClientData
     {
         ClientData {
-            position:Vector2::new(0.0, 0.0),
+            vel:Vector2::new(0.0, 0.0),
             shoot:self.input.shoot,
             client_id:self.client_id
         }

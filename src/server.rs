@@ -17,29 +17,38 @@ impl Server {
     {
         for cd in client_data
         {
+            let client_id = cd.client_id;
+
             if cd.shoot
             {
-                let client_id = cd.client_id;
-                let mut spawn = true;
-                for (_, e) in self.current.entities.iter()
+                match self.current.entities.iter().find(|(id, e)| 
                 {
-                    if let Actor::Player(p) = e.actor
-                    {
-                        if p.client_id == client_id
-                        {
-                            spawn = false;
-                        }
+                    if let Actor::Player(p) = e.actor {
+                        return client_id == p.client_id;
                     }
-                }
 
-                if spawn
+                    false
+                })
                 {
-                    let (id, e) = self.current.entities.new_entity_replicated().expect("could not spawn entity");
-                    e.pos = Vector2::new(10.0, 10.0);
-                    e.actor = Actor::Player(Player {
-                        client_id:client_id
-                    });
-                    println!("spawning player entity {:?}", id);
+                    None => {
+                        let (id, e) = self.current.entities.new_entity_replicated().expect("could not spawn entity");
+                        e.pos = Vector2::new(10.0, 10.0);
+                        e.actor = Actor::Player(Player {
+                            client_id:client_id
+                        });
+                        println!("spawning player entity {:?}", id);
+                    },
+                    _ => {}
+                }
+            }
+
+            for (_, e) in self.current.entities.iter_mut() {
+                if let Actor::Player(p) = e.actor
+                {
+                    if p.client_id == client_id
+                    {
+                        e.pos += cd.vel;
+                    }
                 }
             }
         }
@@ -47,17 +56,11 @@ impl Server {
 
     pub fn update(&mut self, delta:f32, client_data:&[ClientData]) -> State
     {
-        println!("{}", delta);
         self.update_client_data(client_data);
         self.current.clone()
     }
     
     pub fn restart(&mut self) {
         self.current.entities.clear();
-        /*let (id, e) = self.current.entities.new_entity_replicated().expect("could not create entity");
-        e.pos = Vector2::new(10.0, 10.0);
-        e.actor = Actor::Player(Player {
-            player_id:0
-        });*/
     }
 }
