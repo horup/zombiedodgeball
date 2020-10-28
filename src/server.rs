@@ -45,8 +45,9 @@ impl Server {
         }
     }
 
-    pub fn update(&mut self, client_data:&[ClientData]) -> State
+    pub fn update(&mut self, delta:f32, client_data:&[ClientData]) -> State
     {
+        println!("{}", delta);
         self.update_client_data(client_data);
         self.current.clone()
     }

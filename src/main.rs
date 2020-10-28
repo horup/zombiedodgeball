@@ -42,8 +42,9 @@ impl Main {
 
 impl EventHandler for Main {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        let delta = 1.0 / self.tick_rate_ps as f32;
         if timer::check_update_time(ctx, self.tick_rate_ps){
-            let s = self.server.update(&self.client_results);
+            let s = self.server.update(delta, &self.client_results);
             self.client_results.clear();
             self.client.update(s);
         }
