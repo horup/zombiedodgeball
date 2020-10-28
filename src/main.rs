@@ -25,7 +25,8 @@ pub fn main() {
 struct Main {
     pub tick_rate_ps:u32,
     pub client:Client,
-    pub server:Server
+    pub server:Server,
+    pub client_results:Vec<ClientData>
 }
 
 impl Main {
@@ -33,7 +34,8 @@ impl Main {
         Main {
             server: Server::new(),
             client: Client::new(ctx),
-            tick_rate_ps:20
+            tick_rate_ps:20,
+            client_results:Vec::new()
         }
     }
 }
@@ -41,7 +43,8 @@ impl Main {
 impl EventHandler for Main {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         if timer::check_update_time(ctx, self.tick_rate_ps){
-            let s = self.server.update();
+            let s = self.server.update(&self.client_results);
+            self.client_results.clear();
             self.client.update(s);
         }
 
@@ -49,7 +52,8 @@ impl EventHandler for Main {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        self.client.render(ctx, self.tick_rate_ps)?;
+        let res = self.client.render(ctx, self.tick_rate_ps)?;
+        self.client_results.push(res);
         Ok(())
     }
 }

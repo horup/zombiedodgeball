@@ -11,3 +11,4 @@ ggez = "0.5"
 cgmath = "0.17.0"
 image = "0.23.10"
 gamestate = {git = "https://github.com/horup/gamestate-rs.git", branch = "main"}
+uuid = {version = "0.8.1", features = ["v4"]}

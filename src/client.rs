@@ -1,5 +1,7 @@
 use cgmath::Vector2;
+use gamestate::EntityID;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
+use uuid::Uuid;
 
 use crate::state::State;
 
@@ -10,7 +12,36 @@ pub struct Client
 {
     current:State,
     previous:State,
-    images:Images
+    images:Images,
+    input:Input,
+    client_id:u128
+}
+
+
+#[derive(Copy, Clone, Debug)]
+pub struct Input 
+{
+    pub dpad:Vector2<f32>,
+    pub shoot:bool
+}
+
+impl Default for Input
+{
+    fn default() -> Self {
+        Self {
+            dpad:Vector2::new(0.0, 0.0),
+            shoot:false
+        }
+    }
+}
+
+
+
+pub struct ClientData
+{
+    pub position:Vector2<f32>,
+    pub shoot:bool,
+    pub client_id:u128
 }
 
 impl Client
@@ -34,21 +65,38 @@ impl Client
             previous:State::new(),
             images:Images {
                 spritesheet:spritesheet
-            }
+            },
+            input:Input::default(),
+            client_id:Uuid::new_v4().as_u128()
         }
     }
 
-    pub fn render(&mut self, ctx:&mut Context, tick_rate_ps:u32) -> GameResult<()>
+    pub fn update_input(&mut self, ctx:&mut Context)
     {
-        let mut current = &mut self.current;
-        current.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
-        current.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {current.input.dpad.y};
-        current.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
-        current.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {current.input.dpad.x};
-        current.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
-        
+        self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
+        self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {self.input.dpad.y};
+        self.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
+        self.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {self.input.dpad.x};
+        self.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
+    }
+
+    pub fn update_player(&mut self, delta:f32) -> ClientData
+    {
+        ClientData {
+            position:Vector2::new(0.0, 0.0),
+            shoot:self.input.shoot,
+            client_id:self.client_id
+        }
+    }
+
+    pub fn render(&mut self, ctx:&mut Context, tick_rate_ps:u32) -> GameResult<ClientData>
+    {
+        let delta = timer::average_delta(ctx).as_secs_f32();
+        self.update_input(ctx);
+        let res = self.update_player(delta);
+    
         let remaining = timer::remaining_update_time(ctx);
-        let alpha = remaining.as_secs_f32() as f32 * tick_rate_ps as f32;// / self.tick_rate_ps as f32;
+        let alpha = remaining.as_secs_f32() as f32 * tick_rate_ps as f32;
         let current = &self.current;
         let previous = &self.previous;
         let size = graphics::size(ctx);
@@ -77,6 +125,8 @@ impl Client
             }
         }
 
-		graphics::present(ctx)
+        graphics::present(ctx)?;
+        
+        Ok(res)
     }
 }
