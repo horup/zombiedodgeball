@@ -3,7 +3,7 @@ use gamestate::EntityID;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
 use uuid::Uuid;
 
-use crate::state::{Actor, Entity, State};
+use crate::{ClientData, state::{Actor, Entity, State}};
 
 struct Images {
     pub spritesheet:ImageGeneric<GlBackendSpec>
@@ -36,23 +36,6 @@ impl Default for Input
 }
 
 
-#[derive(Debug, Copy, Clone)]
-pub struct ClientData
-{
-    pub vel:Vector2<f32>,
-    pub shoot:bool,
-    pub client_id:u128
-}
-
-impl  Default for ClientData {
-    fn default() -> Self {
-        ClientData {
-            vel:Vector2::new(0.0, 0.0),
-            shoot:false,
-            client_id:0
-        }
-    }
-}
 
 impl Client
 {
