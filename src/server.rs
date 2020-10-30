@@ -1,15 +1,17 @@
 use cgmath::Vector2;
-use crate::{ClientData, state::{Actor, Common, Player, Sprite, State}};
+use crate::{ClientData, state::{Actor, Common, Player, Sprite, State, Zombie}};
 
 pub struct Server {
-    pub current:State
+    pub current:State,
+    pub iterations:i32
 }
 
 impl Server {
     pub fn new() -> Self
     {
         Self {
-            current:State::new()
+            current:State::new(),
+            iterations:0
         }
     }
 
@@ -57,6 +59,16 @@ impl Server {
 
     pub fn update(&mut self, delta:f32, client_data:&[ClientData]) -> State
     {
+        if self.iterations % 20 == 0 {
+            let (id, e) = self.current.entities.new_entity_replicated().expect("could not create entity");
+            e.pos = Vector2::new(rand::random::<f32>() * 20.0, rand::random::<f32>() * 20.0);
+            e.sprite = Some(Sprite {
+                x:1.0,
+                ..Sprite::default()
+            });
+            e.actor = Actor::Zombie(Common::default(), Zombie {});
+        }
+        self.iterations += 1;
         self.update_client_data(client_data);
         self.current.clone()
     }

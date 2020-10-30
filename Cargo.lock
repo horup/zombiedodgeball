@@ -2571,5 +2571,6 @@ dependencies = [
  "gamestate",
  "ggez",
  "image 0.23.11",
+ "rand 0.7.3",
  "uuid",
 ]
