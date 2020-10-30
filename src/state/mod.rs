@@ -2,6 +2,8 @@ mod entity;
 pub use entity::*;
 mod actor;
 pub use actor::*;
+mod sprite;
+pub use sprite::*;
 
 #[derive(Clone)]
 pub struct State {

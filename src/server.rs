@@ -1,5 +1,5 @@
 use cgmath::Vector2;
-use crate::{ClientData, state::{Actor, Common, Player, State}};
+use crate::{ClientData, state::{Actor, Common, Player, Sprite, State}};
 
 pub struct Server {
     pub current:State
@@ -36,6 +36,7 @@ impl Server {
                         e.actor = Actor::Player(Common::default(), Player {
                             client_id:client_id
                         });
+                        e.sprite = Some(Sprite::default());
                         println!("spawning player entity {:?}", id);
                     },
                     _ => {}

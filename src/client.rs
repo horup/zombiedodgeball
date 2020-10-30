@@ -64,6 +64,8 @@ impl Client
 
     pub fn new(ctx:&mut Context) -> Client
     {
+        graphics::set_default_filter(ctx, graphics::FilterMode::Nearest);
+
         let bytes = include_bytes!("./resources/spritesheet.png");
         let img = image::load_from_memory(bytes).unwrap();
         
@@ -141,18 +143,22 @@ impl Client
         })?;
         graphics::clear(ctx, graphics::BLACK);
 
-        for (id, curr) in current.entities.iter()
-        {
-            if let Some((_, prev)) = previous.entities.get_entity(id)
-            {
-                let v:Vector2<f32> = (curr.pos - prev.pos) * alpha;
+        for (id, curr) in current.entities.iter() {
+            if let Some((_, prev)) = previous.entities.get_entity(id) {
+                if let Some(sprite) = curr.sprite {
+                    let v:Vector2<f32> = (curr.pos - prev.pos) * alpha;
                 
-                let mut params = DrawParam::new();
-                params.dest.x = prev.pos.x + v.x;
-                params.dest.y = prev.pos.y + v.y;
-                params.scale.x = 1.0 / sprite_size;
-                params.scale.y = 1.0 / sprite_size;
-                graphics::draw(ctx,   &self.images.spritesheet, params)?;
+                    let mut params = DrawParam::new();
+                    params.dest.x = prev.pos.x + v.x;
+                    params.dest.y = prev.pos.y + v.y;
+                    params.src.x = sprite.x / sprite.cols;
+                    params.src.y = sprite.y / sprite.rows;
+                    params.src.w = 1.0 / sprite.cols;
+                    params.src.h = 1.0 / sprite.rows;
+                    params.scale.x = 1.0 / sprite_size;
+                    params.scale.y = 1.0 / sprite_size;
+                    graphics::draw(ctx,   &self.images.spritesheet, params)?;
+                }
             }
         }
 
