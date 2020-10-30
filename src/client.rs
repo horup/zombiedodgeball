@@ -3,7 +3,7 @@ use gamestate::EntityID;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
 use uuid::Uuid;
 
-use crate::state::State;
+use crate::state::{Actor, Entity, State};
 
 struct Images {
     pub spritesheet:ImageGeneric<GlBackendSpec>
@@ -36,12 +36,22 @@ impl Default for Input
 }
 
 
-
+#[derive(Debug, Copy, Clone)]
 pub struct ClientData
 {
     pub vel:Vector2<f32>,
     pub shoot:bool,
     pub client_id:u128
+}
+
+impl  Default for ClientData {
+    fn default() -> Self {
+        ClientData {
+            vel:Vector2::new(0.0, 0.0),
+            shoot:false,
+            client_id:0
+        }
+    }
 }
 
 impl Client
@@ -80,13 +90,34 @@ impl Client
         self.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
     }
 
+    pub fn find_player_entity_mut(&mut self) -> Option<(EntityID, &mut Entity)>
+    {
+        let client_id = self.client_id;
+        self.current.entities.iter_mut().find(|(_, e)|{
+            if let Actor::Player(_, player) = e.actor {
+                if player.client_id == client_id {
+                    return true;
+                }
+            }
+
+            false
+        })
+    }
+
     pub fn update_player(&mut self, delta:f32) -> ClientData
     {
-        ClientData {
-            vel:Vector2::new(0.0, 0.0),
-            shoot:self.input.shoot,
-            client_id:self.client_id
-        }
+        let mut data = ClientData::default();
+        data.client_id = self.client_id;
+        if let Some((id, entity)) = self.find_player_entity_mut() {
+            if let Actor::Player(common, player) = entity.actor {
+                let mut vel = self.input.dpad;
+                vel = vel * delta;
+                data.vel = vel * common.speed;
+            }
+        };
+
+        data.shoot = self.input.shoot;
+        data
     }
 
     pub fn render(&mut self, ctx:&mut Context, tick_rate_ps:u32) -> GameResult<ClientData>

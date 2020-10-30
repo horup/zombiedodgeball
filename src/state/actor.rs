@@ -3,8 +3,23 @@
 pub enum Actor
 {
     None,
-    Zombie(Zombie),
-    Player(Player)
+    Zombie(Common, Zombie),
+    Player(Common, Player)
+}
+
+#[derive(Copy, Clone, PartialEq)]
+pub struct Common
+{
+    pub speed:f32
+}
+
+impl Default for Common
+{
+    fn default() -> Self {
+        Self {
+            speed:1.0
+        }
+    }
 }
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
