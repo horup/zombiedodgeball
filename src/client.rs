@@ -1,9 +1,8 @@
 use cgmath::Vector2;
 use gamestate::EntityID;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
-use uuid::Uuid;
-
 use crate::{ClientData, state::{Actor, Entity, State}};
+use uuid::Uuid;
 
 struct Images {
     pub spritesheet:ImageGeneric<GlBackendSpec>
@@ -79,7 +78,7 @@ impl Client
     {
         let client_id = self.client_id;
         self.current.entities.iter_mut().find(|(_, e)|{
-            if let Actor::Player(_, player) = e.actor {
+            if let Some(player) = e.player {
                 if player.client_id == client_id {
                     return true;
                 }
@@ -93,11 +92,12 @@ impl Client
     {
         let mut data = ClientData::default();
         data.client_id = self.client_id;
-        if let Some((id, entity)) = self.find_player_entity_mut() {
-            if let Actor::Player(common, player) = entity.actor {
+        if let Some((id, e)) = self.find_player_entity_mut() {
+
+            if let Some(actor) = e.actor {
                 let mut vel = self.input.dpad;
                 vel = vel * delta;
-                data.vel = vel * common.speed;
+                data.vel = vel * actor.speed;
             }
         };
 

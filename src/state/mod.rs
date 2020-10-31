@@ -4,6 +4,8 @@ mod actor;
 pub use actor::*;
 mod sprite;
 pub use sprite::*;
+mod player;
+pub use player::*;
 
 #[derive(Clone)]
 pub struct State {

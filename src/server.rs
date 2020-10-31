@@ -1,5 +1,5 @@
 use cgmath::Vector2;
-use crate::{ClientData, state::{Actor, Common, Player, Sprite, State, Zombie}};
+use crate::{ClientData, state::{Actor,  Player, Sprite, State}};
 
 pub struct Server {
     pub current:State,
@@ -25,19 +25,21 @@ impl Server {
             {
                 match self.current.entities.iter().find(|(id, e)| 
                 {
-                    if let Actor::Player(c, p) = e.actor {
+                    if let Some(p) = e.player {
                         return client_id == p.client_id;
                     }
 
+                 
                     false
                 })
                 {
                     None => {
                         let (id, e) = self.current.entities.new_entity_replicated().expect("could not spawn entity");
                         e.pos = Vector2::new(10.0, 10.0);
-                        e.actor = Actor::Player(Common::default(), Player {
-                            client_id:client_id
+                        e.actor = Some(Actor {
+                            speed:1.0
                         });
+                        e.player = Some(Player {client_id:client_id});
                         e.sprite = Some(Sprite::default());
                         println!("spawning player entity {:?}", id);
                     },
@@ -46,8 +48,7 @@ impl Server {
             }
 
             for (_, e) in self.current.entities.iter_mut() {
-                if let Actor::Player(c, p) = e.actor
-                {
+                if let Some(p) = e.player {
                     if p.client_id == client_id
                     {
                         e.pos += cd.vel;
@@ -66,7 +67,9 @@ impl Server {
                 x:1.0,
                 ..Sprite::default()
             });
-            e.actor = Actor::Zombie(Common::default(), Zombie {});
+            e.actor = Some(Actor {
+                speed:1.0
+            });
         }
         self.iterations += 1;
         self.update_client_data(client_data);
