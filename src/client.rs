@@ -34,8 +34,6 @@ impl Default for Input
     }
 }
 
-
-
 impl Client
 {
     pub fn update(&mut self, new_state:State)

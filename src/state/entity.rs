@@ -1,6 +1,6 @@
 use cgmath::Vector2;
 use gamestate::DeltaSerializable;
-use super::{Actor, Player, Sprite};
+use super::{Actor, Dodgeball, Player, Sprite};
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Entity
@@ -9,7 +9,8 @@ pub struct Entity
     pub vel:Vector2<f32>,
     pub sprite:Option<Sprite>,
     pub actor:Option<Actor>,
-    pub player:Option<Player>
+    pub player:Option<Player>,
+    pub dodgeball:Option<Dodgeball>
 }
 
 impl Default for Entity
@@ -20,7 +21,8 @@ impl Default for Entity
             vel:Vector2 {x:0.0, y:0.0},
             actor:None,
             sprite:None,
-            player:None
+            player:None,
+            dodgeball:None
         }
     }
 }

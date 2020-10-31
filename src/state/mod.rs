@@ -6,6 +6,8 @@ mod sprite;
 pub use sprite::*;
 mod player;
 pub use player::*;
+mod dodgeball;
+pub use dodgeball::*;
 
 #[derive(Clone)]
 pub struct State {
