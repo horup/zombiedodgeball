@@ -1,5 +1,5 @@
 use cgmath::Vector2;
-use crate::{ClientData, state::{Actor,  Player, Sprite, State}};
+use crate::{ClientData, systems::movement, state::{Actor,  Player, Sprite, State}};
 
 pub struct Server {
     pub current:State,
@@ -37,21 +37,25 @@ impl Server {
                         let (id, e) = self.current.entities.new_entity_replicated().expect("could not spawn entity");
                         e.pos = Vector2::new(10.0, 10.0);
                         e.actor = Some(Actor {
-                            speed:1.0
+                            speed:1.0,
+                            ..Actor::default()
                         });
                         e.player = Some(Player {client_id:client_id});
                         e.sprite = Some(Sprite::default());
                         println!("spawning player entity {:?}", id);
                     },
                     Some((id, player_entity)) => {
-                        
-                        let (id, dodge_ball_entity) = self.current.entities.new_entity_replicated().expect("could not spawn ball");
-                        dodge_ball_entity.pos = player_entity.pos;
-                        dodge_ball_entity.vel = Vector2::new(1.0, 1.0);
-                        dodge_ball_entity.sprite = Some(Sprite {
-                            x:2.0,
-                            ..Sprite::default()
-                        })
+                        if let Some(actor) = player_entity.actor {
+                            if actor.cooldown <= 0.0 {
+                                let (id, dodge_ball_entity) = self.current.entities.new_entity_replicated().expect("could not spawn ball");
+                                dodge_ball_entity.pos = player_entity.pos;
+                                dodge_ball_entity.vel = Vector2::new(1.0, 1.0);
+                                dodge_ball_entity.sprite = Some(Sprite {
+                                    x:2.0,
+                                    ..Sprite::default()
+                                })
+                            }
+                        }
                     }
                 }
             }
@@ -77,15 +81,14 @@ impl Server {
                 ..Sprite::default()
             });
             e.actor = Some(Actor {
-                speed:1.0
+                speed:1.0,
+                ..Actor::default()
             });
         }
         self.iterations += 1;
         self.update_client_data(client_data);
 
-        for (id, e) in self.current.entities.iter_mut() {
-            e.pos += e.vel * delta;
-        }
+        movement(&mut self.current, delta);
 
         self.current.clone()
     }
