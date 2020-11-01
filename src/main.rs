@@ -1,7 +1,6 @@
 use ggez::{Context, ContextBuilder, GameResult, timer};
 use ggez::event::{self, EventHandler};
 mod state;
-mod systems;
 mod server;
 mod msg;
 pub use server::*;
