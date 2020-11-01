@@ -6,6 +6,7 @@ pub struct Server {
     pub iterations:i32
 }
 
+
 impl Server {
     pub fn new() -> Self
     {
@@ -23,12 +24,11 @@ impl Server {
 
             if cd.shoot
             {
-                match self.current.entities.iter().find(|(id, e)| 
+                match self.current.entities.clone().iter().find(|(id, e)| 
                 {
                     if let Some(p) = e.player {
                         return client_id == p.client_id;
                     }
-
                  
                     false
                 })
@@ -43,7 +43,16 @@ impl Server {
                         e.sprite = Some(Sprite::default());
                         println!("spawning player entity {:?}", id);
                     },
-                    _ => {}
+                    Some((id, player_entity)) => {
+                        
+                        let (id, dodge_ball_entity) = self.current.entities.new_entity_replicated().expect("could not spawn ball");
+                        dodge_ball_entity.pos = player_entity.pos;
+                        dodge_ball_entity.vel = Vector2::new(1.0, 1.0);
+                        dodge_ball_entity.sprite = Some(Sprite {
+                            x:2.0,
+                            ..Sprite::default()
+                        })
+                    }
                 }
             }
 
@@ -73,6 +82,11 @@ impl Server {
         }
         self.iterations += 1;
         self.update_client_data(client_data);
+
+        for (id, e) in self.current.entities.iter_mut() {
+            e.pos += e.vel * delta;
+        }
+
         self.current.clone()
     }
     
