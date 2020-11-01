@@ -21,7 +21,8 @@ pub struct Client
 pub struct Input 
 {
     pub dpad:Vector2<f32>,
-    pub shoot:bool
+    pub shoot:bool,
+    pub mouse_pos:Vector2<f32>
 }
 
 impl Default for Input
@@ -29,7 +30,8 @@ impl Default for Input
     fn default() -> Self {
         Self {
             dpad:Vector2::new(0.0, 0.0),
-            shoot:false
+            shoot:false,
+            mouse_pos:Vector2::new(0.0, 0.0)
         }
     }
 }
@@ -63,13 +65,16 @@ impl Client
         }
     }
 
-    pub fn update_input(&mut self, ctx:&mut Context)
+    pub fn update_input(&mut self, ctx:&mut Context, r:&Rect)
     {
         self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
         self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {self.input.dpad.y};
         self.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
         self.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {self.input.dpad.x};
         self.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
+        let cursor = mouse::position(&ctx);
+        self.input.mouse_pos = Vector2::new(cursor.x / r.w, cursor.y / r.h);
+        println!("{:?}", self.input.mouse_pos);
     }
 
     pub fn find_player_entity_mut(&mut self) -> Option<(EntityID, &mut Entity)>
@@ -106,23 +111,26 @@ impl Client
     pub fn render(&mut self, ctx:&mut Context, tick_rate_ps:u32) -> GameResult<ClientData>
     {
         let delta = timer::average_delta(ctx).as_secs_f32();
-        self.update_input(ctx);
         let res = self.update_player(delta);
     
         let remaining = timer::remaining_update_time(ctx);
         let alpha = remaining.as_secs_f32() as f32 * tick_rate_ps as f32;
-        let current = &self.current;
-        let previous = &self.previous;
-        let size = graphics::size(ctx);
+      
+        let size = graphics::drawable_size(ctx);
         let zoom = 32.0;
         let sprite_size = 16.0;
-        graphics::set_screen_coordinates(ctx, Rect {
+        let r = Rect {
             x:0.0,
             y:0.0,
             w:size.0 / zoom,
             h:size.1 / zoom
-        })?;
+        };
+        graphics::set_screen_coordinates(ctx, r)?;
         graphics::clear(ctx, graphics::BLACK);
+
+        self.update_input(ctx, &r);
+        let current = &self.current;
+        let previous = &self.previous;
 
         for (id, curr) in current.entities.iter() {
             if let Some((_, prev)) = previous.entities.get_entity(id) {
@@ -130,8 +138,8 @@ impl Client
                     let v:Vector2<f32> = (curr.pos - prev.pos) * alpha;
                 
                     let mut params = DrawParam::new();
-                    params.dest.x = prev.pos.x + v.x;
-                    params.dest.y = prev.pos.y + v.y;
+                    params.dest.x = prev.pos.x + v.x - 0.5;
+                    params.dest.y = prev.pos.y + v.y - 0.5;
                     params.src.x = sprite.x / sprite.cols;
                     params.src.y = sprite.y / sprite.rows;
                     params.src.w = 1.0 / sprite.cols;

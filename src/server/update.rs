@@ -57,7 +57,7 @@ pub fn update_clients(state:&mut State, delta:f32, client_data:&[ClientData])
             else {
                 // player entity does not exist, spawn him
                 let (id, e) = state.entities.new_entity_replicated().expect("could not player entity");
-                e.pos = Vector2::new(10.0, 10.0);
+                e.pos = Vector2::new(7.0, 15.0);
                 e.actor = Some(Actor {
                     speed:1.0,
                     ..Actor::default()
