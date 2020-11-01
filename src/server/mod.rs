@@ -1,5 +1,4 @@
-use cgmath::Vector2;
-use crate::{ClientData, state::{Actor,  Player, Sprite, State}};
+use crate::{ClientData, state::{State}};
 mod update;
 
 pub struct Server {
