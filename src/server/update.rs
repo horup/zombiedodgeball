@@ -1,6 +1,6 @@
-use cgmath::Vector2;
+use cgmath::{Point2, Vector2};
 use cgmath::prelude::*;
-use gamestate::EntityID;
+use collision::{Aabb2, prelude::*};
 
 use crate::{ClientData, state::{Actor, Player, Sprite, State}};
 
@@ -96,7 +96,31 @@ pub fn update_actors(state:&mut State, delta:f32)
 
 pub fn update_movement(state:&mut State, delta:f32)
 {
-    for (_,e) in state.entities.iter_mut() {
-        e.pos += e.vel * delta;
+    let entitites = state.entities.clone();
+    for (my_id,my_e) in state.entities.iter_mut() {
+        let my_v = my_e.vel * delta;
+        my_e.pos += my_v;
+
+        let r = 0.5;
+        let my_aabb = Aabb2::new(Point2 {x:my_e.pos.x - r, y:my_e.pos.y - r}, Point2 {x:my_e.pos.x + r, y:my_e.pos.y + r});
+
+        for (other_id, other_e) in entitites.iter() {
+            if my_id == other_id {
+                continue;
+            }
+
+            let v = other_e.pos - my_e.pos;
+
+
+            let d = my_v.dot(v);
+            if d > 0.0 {
+                let other_aabb = Aabb2::new(Point2 {x:other_e.pos.x - r, y:other_e.pos.y - r}, Point2 {x:other_e.pos.x + r, y:other_e.pos.y + r});
+                if my_aabb.intersects(&other_aabb) {
+                    my_e.vel = Vector2::new(0.0, 0.0);
+                }
+            }
+
+        }
+
     }
 }

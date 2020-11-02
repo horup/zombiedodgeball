@@ -151,6 +151,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "bit-set"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6e11e16035ea35e4e5997b393eacbf6f63983188f7a2ad25bfb13465f5ad59de"
+dependencies = [
+ "bit-vec",
+]
+
+[[package]]
+name = "bit-vec"
+version = "0.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5f0dc55f2d8a1a85650ac47858bb001b4c0dd73d79e3c455a842925e68d29cd3"
+
+[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -277,6 +292,7 @@ dependencies = [
  "approx",
  "num-traits 0.2.12",
  "rand 0.6.5",
+ "serde",
 ]
 
 [[package]]
@@ -318,6 +334,20 @@ dependencies = [
  "foreign-types",
  "libc",
  "objc",
+]
+
+[[package]]
+name = "collision"
+version = "0.20.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6107f6be76c2269a9c8d89e707a66122bd3086f987fa508133a5f774e8ac4ced"
+dependencies = [
+ "approx",
+ "bit-set",
+ "cgmath",
+ "num",
+ "rand 0.6.5",
+ "smallvec",
 ]
 
 [[package]]
@@ -1364,6 +1394,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "num"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8536030f9fea7127f841b45bb6243b27255787fb4eb83958aa1ef9d2fdc0c36"
+dependencies = [
+ "num-bigint",
+ "num-complex",
+ "num-integer",
+ "num-iter",
+ "num-rational 0.2.4",
+ "num-traits 0.2.12",
+]
+
+[[package]]
+name = "num-bigint"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "090c7f9998ee0ff65aa5b723e4009f7b217707f1fb5ea551329cc4d6231fb304"
+dependencies = [
+ "autocfg 1.0.1",
+ "num-integer",
+ "num-traits 0.2.12",
+ "serde",
+]
+
+[[package]]
 name = "num-complex"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1371,6 +1427,7 @@ checksum = "b6b19411a9719e753aff12e5187b74d60d3dc449ec3f4dc21e3989c3f554bc95"
 dependencies = [
  "autocfg 1.0.1",
  "num-traits 0.2.12",
+ "serde",
 ]
 
 [[package]]
@@ -1412,8 +1469,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5c000134b5dbf44adc5cb772486d335293351644b801551abe8f75c84cfa4aef"
 dependencies = [
  "autocfg 1.0.1",
+ "num-bigint",
  "num-integer",
  "num-traits 0.2.12",
+ "serde",
 ]
 
 [[package]]
@@ -1999,6 +2058,9 @@ name = "serde"
 version = "1.0.117"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b88fa983de7720629c9387e9f517353ed404164b1e482c970a90c1a4aaf7dc1a"
+dependencies = [
+ "serde_derive",
+]
 
 [[package]]
 name = "serde_derive"
@@ -2568,6 +2630,7 @@ name = "zombiedodgeball"
 version = "0.1.0"
 dependencies = [
  "cgmath",
+ "collision",
  "gamestate",
  "ggez",
  "image 0.23.11",
