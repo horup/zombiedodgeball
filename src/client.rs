@@ -65,7 +65,7 @@ impl Client
         }
     }
 
-    pub fn update_input(&mut self, ctx:&mut Context, r:&Rect)
+    pub fn update_input(&mut self, ctx:&mut Context, zoom:f32)
     {
         self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
         self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {self.input.dpad.y};
@@ -73,8 +73,7 @@ impl Client
         self.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {self.input.dpad.x};
         self.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
         let cursor = mouse::position(&ctx);
-        self.input.mouse_pos = Vector2::new(cursor.x / r.w, cursor.y / r.h);
-        println!("{:?}", self.input.mouse_pos);
+        self.input.mouse_pos = Vector2::new(cursor.x / zoom, cursor.y / zoom);
     }
 
     pub fn find_player_entity_mut(&mut self) -> Option<(EntityID, &mut Entity)>
@@ -101,6 +100,7 @@ impl Client
                 let mut vel = self.input.dpad;
                 vel = vel * delta;
                 data.vel = vel * actor.speed;
+                data.shoot_at = self.input.mouse_pos;
             }
         };
 
@@ -128,7 +128,7 @@ impl Client
         graphics::set_screen_coordinates(ctx, r)?;
         graphics::clear(ctx, graphics::BLACK);
 
-        self.update_input(ctx, &r);
+        self.update_input(ctx, zoom);
         let current = &self.current;
         let previous = &self.previous;
 

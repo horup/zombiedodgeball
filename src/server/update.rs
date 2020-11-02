@@ -1,8 +1,8 @@
 use cgmath::Vector2;
+use cgmath::prelude::*;
 use gamestate::EntityID;
 
 use crate::{ClientData, state::{Actor, Player, Sprite, State}};
-
 
 pub fn update_spawn(state:&mut State, iterations:i32)
 {
@@ -47,7 +47,8 @@ pub fn update_clients(state:&mut State, delta:f32, client_data:&[ClientData])
                 if shoot {
                     let (id, dodge_ball_entity) = state.entities.new_entity_replicated().expect("could not spawn ball");
                     dodge_ball_entity.pos = player_entity.pos;
-                    dodge_ball_entity.vel = Vector2::new(1.0, 1.0);
+                    dodge_ball_entity.vel = cd.shoot_at - dodge_ball_entity.pos;
+                    dodge_ball_entity.vel = dodge_ball_entity.vel.normalize() * 15.0;
                     dodge_ball_entity.sprite = Some(Sprite {
                         x:2.0,
                         ..Sprite::default()
