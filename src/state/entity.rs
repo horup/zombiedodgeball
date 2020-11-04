@@ -5,6 +5,8 @@ use super::{Actor, Dodgeball, Player, Sprite};
 #[derive(Copy, Clone, PartialEq)]
 pub struct Entity
 {
+    pub delete:bool,
+    pub collidable:bool,
     pub pos:Vector2<f32>,
     pub vel:Vector2<f32>,
     pub sprite:Option<Sprite>,
@@ -17,6 +19,8 @@ impl Default for Entity
 {
     fn default() -> Self {
         Entity {
+            delete:false,
+            collidable:true,
             pos:Vector2 {x:0.0, y:0.0},
             vel:Vector2 {x:0.0, y:0.0},
             actor:None,

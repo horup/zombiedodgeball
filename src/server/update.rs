@@ -110,11 +110,13 @@ pub fn update_dodge_ball(state:&mut State, delta:f32, collisions:&Vec<CollisionR
 {
     for col in collisions.iter()
     {
-        if let Some((id, e)) = state.entities.get_entity_mut(col.entity_id)
+        if let Some((_, e)) = state.entities.get_entity_mut(col.entity_id)
         {
             if e.dodgeball != None {
-                state.entities.delete_entity(col.entity_id);
-                state.entities.delete_entity(col.other_entity_id);
+                e.delete = true;
+                if let Some((_, e)) = state.entities.get_entity_mut(col.other_entity_id) {
+                    e.delete = true;
+                }
             }
         }
     }
@@ -133,6 +135,9 @@ pub fn update_movement(state:&mut State, delta:f32) -> Vec<CollisionResult>
 
         for (other_id, other_e) in entitites.iter() {
             if my_id == other_id {
+                continue;
+            }
+            if other_e.collidable == false {
                 continue;
             }
 
@@ -154,4 +159,14 @@ pub fn update_movement(state:&mut State, delta:f32) -> Vec<CollisionResult>
     }
 
     return collisions;
+}
+
+
+pub fn cleanup(state:&mut State)
+{
+    for (id, e) in state.entities.clone().iter() {
+        if e.delete == true {
+            state.entities.delete_entity(id);
+        }
+    }
 }

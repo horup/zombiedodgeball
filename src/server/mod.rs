@@ -17,6 +17,7 @@ impl Server {
 
     pub fn update(&mut self, delta:f32, client_data:&[ClientData]) -> State
     {
+        update::cleanup(&mut self.current);
         update::update_spawn(&mut self.current, self.iterations);
         update::update_clients(&mut self.current, delta, client_data);
         let collisions = update::update_movement(&mut self.current, delta);
