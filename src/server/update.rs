@@ -1,8 +1,9 @@
 use cgmath::{Point2, Vector2};
 use cgmath::prelude::*;
 use collision::{Aabb2, prelude::*};
+use gamestate::EntityID;
 
-use crate::{ClientData, state::{Actor, Player, Sprite, State}};
+use crate::{ClientData, state::{Actor, Dodgeball, Player, Sprite, State}};
 
 pub fn update_spawn(state:&mut State, iterations:i32)
 {
@@ -52,7 +53,10 @@ pub fn update_clients(state:&mut State, delta:f32, client_data:&[ClientData])
                     dodge_ball_entity.sprite = Some(Sprite {
                         x:2.0,
                         ..Sprite::default()
-                    })
+                    });
+                    dodge_ball_entity.dodgeball = Some(Dodgeball {
+
+                    });
                 }
             }
             else {
@@ -73,7 +77,8 @@ pub fn update_clients(state:&mut State, delta:f32, client_data:&[ClientData])
             if let Some(p) = e.player {
                 if p.client_id == client_id
                 {
-                    e.pos += cd.vel;
+                    e.vel += cd.vel;
+                    //e.pos += cd.vel;
                 }
             }
         }
@@ -94,8 +99,30 @@ pub fn update_actors(state:&mut State, delta:f32)
     }
 }
 
-pub fn update_movement(state:&mut State, delta:f32)
+#[derive(Copy, Clone, Default)]
+pub struct CollisionResult
 {
+    pub entity_id:EntityID,
+    pub other_entity_id:EntityID
+}
+
+pub fn update_dodge_ball(state:&mut State, delta:f32, collisions:&Vec<CollisionResult>)
+{
+    for col in collisions.iter()
+    {
+        if let Some((id, e)) = state.entities.get_entity_mut(col.entity_id)
+        {
+            if e.dodgeball != None {
+                state.entities.delete_entity(col.entity_id);
+                state.entities.delete_entity(col.other_entity_id);
+            }
+        }
+    }
+}
+
+pub fn update_movement(state:&mut State, delta:f32) -> Vec<CollisionResult>
+{
+    let mut collisions = Vec::new();
     let entitites = state.entities.clone();
     for (my_id,my_e) in state.entities.iter_mut() {
         let my_v = my_e.vel * delta;
@@ -110,17 +137,21 @@ pub fn update_movement(state:&mut State, delta:f32)
             }
 
             let v = other_e.pos - my_e.pos;
-
-
             let d = my_v.dot(v);
             if d > 0.0 {
                 let other_aabb = Aabb2::new(Point2 {x:other_e.pos.x - r, y:other_e.pos.y - r}, Point2 {x:other_e.pos.x + r, y:other_e.pos.y + r});
                 if my_aabb.intersects(&other_aabb) {
                     my_e.vel = Vector2::new(0.0, 0.0);
+
+                    collisions.push(CollisionResult {
+                        entity_id:my_id,
+                        other_entity_id:other_id
+                    });
                 }
             }
 
         }
-
     }
+
+    return collisions;
 }

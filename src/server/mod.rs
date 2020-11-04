@@ -19,7 +19,8 @@ impl Server {
     {
         update::update_spawn(&mut self.current, self.iterations);
         update::update_clients(&mut self.current, delta, client_data);
-        update::update_movement(&mut self.current, delta);
+        let collisions = update::update_movement(&mut self.current, delta);
+        update::update_dodge_ball(&mut self.current, delta, &collisions);
         update::update_actors(&mut self.current, delta);
 
         self.iterations += 1;
