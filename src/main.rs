@@ -11,6 +11,8 @@ pub use client::*;
 mod clientdata;
 pub use clientdata::*;
 
+mod systems;
+
 pub fn main() {
     let (mut ctx, mut event_loop) = ContextBuilder::new("my_game", "Cool Game Author")
         .build()
