@@ -11,12 +11,14 @@ pub use dodgeball::*;
 
 #[derive(Clone)]
 pub struct State {
+    pub time:f32,
     pub entities:gamestate::Entities<Entity>
 }
 
 impl State {
     pub fn new() -> Self {
         Self {
+            time:0.0,
             entities:gamestate::Entities::new()
         }
     }
