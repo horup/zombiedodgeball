@@ -1,0 +1,17 @@
+use gamestate::{Entities, EntityID};
+use crate::state::Entity;
+
+
+pub fn find_player_entity_mut<'a>(entities:&'a mut Entities<Entity>, player_id:&u128) -> Option<(EntityID, &'a mut Entity)>
+{
+    let player_entity = entities.iter_mut().find(|e| {
+        if let Some(player) = e.1.player {
+            if &player.client_id == player_id {
+                return true;
+            }
+        }
+        false
+    });
+    
+    return player_entity;
+}
