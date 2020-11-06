@@ -1,7 +1,7 @@
 use cgmath::Vector2;
 use gamestate::EntityID;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
-use crate::{ClientData, state::{Actor, Entity, State}};
+use crate::{ClientData, update::Event, state::{Actor, Entity, State}};
 use uuid::Uuid;
 
 struct Images {
@@ -12,7 +12,6 @@ pub struct Client
     current:State,
     previous:State,
     images:Images,
-    input:Input,
     client_id:u128
 }
 
@@ -60,20 +59,21 @@ impl Client
             images:Images {
                 spritesheet:spritesheet
             },
-            input:Input::default(),
             client_id:Uuid::new_v4().as_u128()
         }
     }
 
-    pub fn update_input(&mut self, ctx:&mut Context, zoom:f32)
+    fn current_input(ctx:&mut Context, zoom:f32) -> Input
     {
-        self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
-        self.input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {self.input.dpad.y};
-        self.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
-        self.input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {self.input.dpad.x};
-        self.input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
+        let mut input = Input::default();
+        input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::W) {-1.0} else {0.0};
+        input.dpad.y = if keyboard::is_key_pressed(ctx, KeyCode::S) {1.0} else {input.dpad.y};
+        input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::A) {-1.0} else {0.0};
+        input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {input.dpad.x};
+        input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
         let cursor = mouse::position(&ctx);
-        self.input.mouse_pos = Vector2::new(cursor.x / zoom, cursor.y / zoom);
+        input.mouse_pos = Vector2::new(cursor.x / zoom, cursor.y / zoom);
+        input
     }
 
     pub fn find_player_entity_mut(&mut self) -> Option<(EntityID, &mut Entity)>
@@ -90,28 +90,31 @@ impl Client
         })
     }
 
-    pub fn update_player(&mut self, delta:f32) -> ClientData
+    pub fn update_player(&mut self, delta:f32, input:&Input, events:&mut Vec<Event>)
     {
-        let mut data = ClientData::default();
-        data.client_id = self.client_id;
         if let Some((id, e)) = self.find_player_entity_mut() {
-
             if let Some(actor) = e.actor {
-                let mut vel = self.input.dpad;
-                vel = vel * delta;
-                data.vel = vel * actor.speed;
-                data.shoot_at = self.input.mouse_pos;
+                let mut vel = input.dpad;
+                vel = vel * actor.speed * delta;
+                let e = Event::PlayerMove(self.client_id, vel);
+                events.push(e);
             }
-        };
-
-        data.shoot = self.input.shoot;
-        data
+            
+        } else {
+            if input.shoot {
+                // no actor, I want to spawn instead
+                let e = Event::PlayerSpawn(self.client_id);
+                events.push(e);
+            }
+        }
     }
+    
 
-    pub fn render(&mut self, ctx:&mut Context, tick_rate_ps:u32) -> GameResult<ClientData>
+    pub fn render(&mut self, ctx:&mut Context, tick_rate_ps:u32) -> GameResult<Vec<Event>>
     {
+        let mut events = Vec::new();
         let delta = timer::average_delta(ctx).as_secs_f32();
-        let res = self.update_player(delta);
+        //let res = self.update_player(delta);
     
         let remaining = timer::remaining_update_time(ctx);
         let alpha = remaining.as_secs_f32() as f32 * tick_rate_ps as f32;
@@ -128,7 +131,9 @@ impl Client
         graphics::set_screen_coordinates(ctx, r)?;
         graphics::clear(ctx, graphics::BLACK);
 
-        self.update_input(ctx, zoom);
+        let input = Client::current_input(ctx, zoom);
+        self.update_player(delta, &input, &mut events);
+
         let current = &self.current;
         let previous = &self.previous;
 
@@ -153,6 +158,6 @@ impl Client
 
         graphics::present(ctx)?;
         
-        Ok(res)
+        Ok(events)
     }
 }

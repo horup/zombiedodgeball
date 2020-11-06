@@ -10,6 +10,7 @@ mod client;
 pub use client::*;
 mod clientdata;
 pub use clientdata::*;
+use update::Event;
 
 mod update;
 
@@ -29,7 +30,7 @@ struct Main {
     pub tick_rate_ps:u32,
     pub client:Client,
     pub server:Server,
-    pub client_results:Vec<ClientData>
+    pub client_events:Vec<Event>
 }
 
 impl Main {
@@ -38,7 +39,7 @@ impl Main {
             server: Server::new(),
             client: Client::new(ctx),
             tick_rate_ps:20,
-            client_results:Vec::new()
+            client_events:Vec::new()
         }
     }
 }
@@ -47,17 +48,18 @@ impl EventHandler for Main {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         let delta = 1.0 / self.tick_rate_ps as f32;
         if timer::check_update_time(ctx, self.tick_rate_ps){
-            let s = self.server.update(delta, &self.client_results);
-            self.client_results.clear();
+            let s = self.server.update(delta, &self.client_events);
+            self.client_events.clear();
             self.client.update(s);
         }
 
 		Ok(())
     }
 
+
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        let res = self.client.render(ctx, self.tick_rate_ps)?;
-        self.client_results.push(res);
+        let events = self.client.render(ctx, self.tick_rate_ps)?;
+        self.client_events.extend(&events);
         Ok(())
     }
 }
