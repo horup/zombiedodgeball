@@ -11,8 +11,6 @@ pub use client::*;
 mod clientdata;
 pub use clientdata::*;
 
-mod systems;
-
 mod update;
 
 pub fn main() {

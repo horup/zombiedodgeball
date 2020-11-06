@@ -1,5 +1,4 @@
-use crate::{ClientData, state::{State}};
-use crate::systems;
+use crate::{update::Event, state::{State}};
 
 mod update;
 
@@ -17,9 +16,12 @@ impl Server {
         }
     }
 
-    pub fn update(&mut self, delta:f32, client_data:&[ClientData]) -> State
+    pub fn update(&mut self, delta:f32, events:&[Event]) -> State
     {
-        systems::cleanup::cleanup(&mut self.current);
+        self.iterations += 1;
+        super::update::update(&mut self.current, true, delta, self.iterations, events);
+        self.current.clone()
+      /*  systems::cleanup::cleanup(&mut self.current);
         
         let mut wish_to_join:Vec<u128> = client_data.into_iter().map(|x| {
             if x.shoot {
@@ -40,7 +42,7 @@ impl Server {
         update::update_actors(&mut self.current, delta);
 
         self.iterations += 1;
-        self.current.clone()
+        self.current.clone()*/
     }
     
     pub fn restart(&mut self) {
