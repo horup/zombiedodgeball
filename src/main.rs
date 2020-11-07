@@ -8,8 +8,6 @@ pub use msg::*;
 
 mod client;
 pub use client::*;
-mod clientdata;
-pub use clientdata::*;
 use update::Event;
 
 mod update;
