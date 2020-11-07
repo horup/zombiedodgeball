@@ -1,4 +1,5 @@
-use cgmath::Vector2;
+use cgmath::{Point2, Vector2};
+use collision::Aabb2;
 use gamestate::DeltaSerializable;
 use super::{Actor, Dodgeball, Player, Sprite};
 
@@ -7,12 +8,21 @@ pub struct Entity
 {
     pub delete:bool,
     pub collidable:bool,
-    pub pos:Vector2<f32>,
+    pub pos:Point2<f32>,
     pub vel:Vector2<f32>,
     pub sprite:Option<Sprite>,
     pub actor:Option<Actor>,
     pub player:Option<Player>,
     pub dodgeball:Option<Dodgeball>
+}
+
+impl Entity 
+{
+    pub fn aabb2(&self) -> Aabb2<f32>
+    {
+        let r = 0.5;
+        Aabb2::new(Point2::new(self.pos.x - r, self.pos.y - r), Point2::new(self.pos.x + r, self.pos.y + r))
+    }
 }
 
 impl Default for Entity
@@ -21,7 +31,7 @@ impl Default for Entity
         Entity {
             delete:false,
             collidable:true,
-            pos:Vector2 {x:0.0, y:0.0},
+            pos:Point2 {x:0.0, y:0.0},
             vel:Vector2 {x:0.0, y:0.0},
             actor:None,
             sprite:None,

@@ -4,10 +4,8 @@ use ggez::event::{self, EventHandler};
 mod data;
 mod server;
 pub use server::*;
-
 mod client;
 pub use client::*;
-
 mod functions;
 
 pub fn main() {

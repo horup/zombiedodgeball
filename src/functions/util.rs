@@ -15,3 +15,17 @@ pub fn find_player_entity_mut<'a>(entities:&'a mut Entities<Entity>, player_id:&
     
     return player_entity;
 }
+
+pub fn find_player_entity<'a>(entities:&'a Entities<Entity>, player_id:&u128) -> Option<(EntityID, &'a Entity)>
+{
+    let player_entity = entities.iter().find(|e| {
+        if let Some(player) = e.1.player {
+            if &player.client_id == player_id {
+                return true;
+            }
+        }
+        false
+    });
+    
+    return player_entity;
+}

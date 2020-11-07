@@ -1,7 +1,7 @@
 use crate::data::State;
 
 
-pub fn cleanup(state:&mut State)
+pub fn step(state:&mut State)
 {
     for (id, e) in state.entities.clone().iter() {
         if e.delete == true {
