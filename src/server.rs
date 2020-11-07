@@ -1,7 +1,5 @@
 use crate::{update::Event, state::{State}};
 
-mod update;
-
 pub struct Server {
     pub current:State,
     pub iterations:i32
