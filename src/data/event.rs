@@ -1,10 +1,4 @@
-mod util;
-mod spawn;
-mod cleanup;
-mod physics;
-mod update;
 use cgmath::Vector2;
-pub use update::*;
 
 #[derive(Copy, Clone, Debug)]
 pub enum Event

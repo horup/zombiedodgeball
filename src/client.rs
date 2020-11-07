@@ -1,7 +1,7 @@
 use cgmath::Vector2;
 use gamestate::EntityID;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
-use crate::{update::Event, data::{Actor, Entity, State}};
+use crate::{data::{Actor, Event, Entity, State}};
 use uuid::Uuid;
 
 struct Images {

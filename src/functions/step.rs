@@ -1,9 +1,9 @@
-use crate::data::State;
+use crate::data::{Event, State};
 
-use super::{Event, cleanup, physics, spawn};
+use super::{cleanup, physics, spawn};
 
 
-pub fn update(state:&mut State, is_server:bool, delta:f32, iterations:i32, events:&[Event])
+pub fn step(state:&mut State, is_server:bool, delta:f32, iterations:i32, events:&[Event])
 {
     cleanup::cleanup(state);
     if is_server {

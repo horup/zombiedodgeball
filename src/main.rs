@@ -1,3 +1,4 @@
+use data::Event;
 use ggez::{Context, ContextBuilder, GameResult, timer};
 use ggez::event::{self, EventHandler};
 mod data;
@@ -6,9 +7,8 @@ pub use server::*;
 
 mod client;
 pub use client::*;
-use update::Event;
 
-mod update;
+mod functions;
 
 pub fn main() {
     let (mut ctx, mut event_loop) = ContextBuilder::new("my_game", "Cool Game Author")

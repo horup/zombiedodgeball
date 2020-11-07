@@ -1,8 +1,7 @@
 use cgmath::Vector2;
 
-use crate::{data::{Actor, Player, Sprite, State}};
+use crate::{data::{Actor, Event, Player, Sprite, State}};
 
-use super::Event;
 
 
 pub fn spawn(state:&mut State, delta:f32, iterations:i32, events:&[Event])

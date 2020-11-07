@@ -1,4 +1,4 @@
-use crate::{update::Event, data::{State}};
+use crate::{data::{Event, State}};
 
 pub struct Server {
     pub current:State,
@@ -17,7 +17,7 @@ impl Server {
     pub fn update(&mut self, delta:f32, events:&[Event]) -> State
     {
         self.iterations += 1;
-        super::update::update(&mut self.current, true, delta, self.iterations, events);
+        super::functions::step::step(&mut self.current, true, delta, self.iterations, events);
         self.current.clone()
       /*  systems::cleanup::cleanup(&mut self.current);
         

@@ -8,6 +8,8 @@ mod player;
 pub use player::*;
 mod dodgeball;
 pub use dodgeball::*;
+mod event;
+pub use event::*;
 
 #[derive(Clone)]
 pub struct State {

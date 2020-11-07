@@ -1,6 +1,6 @@
 use crate::data::State;
-
-use super::{Event, util::find_player_entity_mut};
+use crate::data::Event;
+use super::{util::find_player_entity_mut};
 
 pub fn physics(state:&mut State, is_server:bool, events:&[Event])
 {
