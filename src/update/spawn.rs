@@ -1,6 +1,6 @@
 use cgmath::Vector2;
 
-use crate::{state::{Actor, Player, Sprite, State}};
+use crate::{data::{Actor, Player, Sprite, State}};
 
 use super::Event;
 
