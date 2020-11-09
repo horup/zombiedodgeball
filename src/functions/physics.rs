@@ -1,13 +1,13 @@
 use cgmath::{Point2, Vector2};
 use collision::{Aabb2, prelude::*};
-use gamestate::{Entities, EntityID};
+use gamestate::{Collection, ID};
 
 use crate::data::{Entity, State};
 use crate::data::Event;
 use super::{util::find_player_entity_mut};
 
 pub struct Body {
-    pub id:EntityID,
+    pub id:ID,
     pub pos:Point2<f32>,
     pub vel:Vector2<f32>
 }
@@ -19,24 +19,24 @@ impl Body {
     }
 }
 
-impl From<&(EntityID, Entity)> for Body {
-    fn from(e: &(EntityID, Entity)) -> Self {
+impl From<&Entity> for Body {
+    fn from(e: &Entity) -> Self {
         Self {
-            id:e.0,
-            pos:e.1.pos,
-            vel:e.1.vel
+            id:e.id,
+            pos:e.pos,
+            vel:e.vel
         }
     }
 }
 
-pub fn collision_check(entity:&(EntityID, &Entity), other_entity:&(EntityID, &Entity)) -> bool
+pub fn collision_check(entity:&Entity, other_entity:&Entity) -> bool
 {
-    let e1 = entity.1;
-    let e2 = other_entity.1;
+    let e1 = entity;
+    let e2 = other_entity;
     e1.aabb2().intersects(&e2.aabb2())
 }
 
-pub fn sub_step(entity:&(EntityID, &mut Entity), all_entities:&Entities<Entity>)
+pub fn sub_step(entity:&Entity, all_entities:&Collection<Entity>)
 {
     
 }

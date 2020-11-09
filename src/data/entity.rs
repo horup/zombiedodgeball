@@ -1,11 +1,12 @@
 use cgmath::{Point2, Vector2};
 use collision::Aabb2;
-use gamestate::DeltaSerializable;
+use gamestate::{DeltaSerializable, ID};
 use super::{Actor, Dodgeball, Player, Sprite};
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Entity
 {
+    pub id:ID,
     pub delete:bool,
     pub collidable:bool,
     pub pos:Point2<f32>,
@@ -25,10 +26,11 @@ impl Entity
     }
 }
 
-impl Default for Entity
+impl gamestate::Entity for Entity 
 {
-    fn default() -> Self {
-        Entity {
+    fn new(id:ID) -> Self {
+        Self {
+            id:id,
             delete:false,
             collidable:true,
             pos:Point2 {x:0.0, y:0.0},
@@ -38,6 +40,10 @@ impl Default for Entity
             player:None,
             dodgeball:None
         }
+    }
+
+    fn id(&self) -> ID {
+        self.id
     }
 }
 

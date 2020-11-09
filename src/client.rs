@@ -1,5 +1,4 @@
 use cgmath::Vector2;
-use gamestate::EntityID;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
 use crate::{data::{Actor, Event, Entity, State}};
 use uuid::Uuid;
@@ -76,10 +75,10 @@ impl Client
         input
     }
 
-    pub fn find_player_entity_mut(&mut self) -> Option<(EntityID, &mut Entity)>
+    pub fn find_player_entity_mut(&mut self) -> Option<&mut Entity>
     {
         let client_id = self.client_id;
-        self.current.entities.iter_mut().find(|(_, e)|{
+        self.current.entities.iter_mut().find(|e|{
             if let Some(player) = e.player {
                 if player.client_id == client_id {
                     return true;
@@ -92,7 +91,7 @@ impl Client
 
     pub fn update_player(&mut self, delta:f32, input:&Input, events:&mut Vec<Event>)
     {
-        if let Some((id, e)) = self.find_player_entity_mut() {
+        if let Some(e) = self.find_player_entity_mut() {
             if let Some(actor) = e.actor {
                 let mut vel = input.dpad;
                 vel = vel * actor.speed * delta;
@@ -137,8 +136,8 @@ impl Client
         let current = &self.current;
         let previous = &self.previous;
 
-        for (id, curr) in current.entities.iter() {
-            if let Some((_, prev)) = previous.entities.get_entity(id) {
+        for curr in current.entities.iter() {
+            if let Some(prev) = previous.entities.get_entity(curr.id) {
                 if let Some(sprite) = curr.sprite {
                     let v:Vector2<f32> = (curr.pos - prev.pos) * alpha;
                 
