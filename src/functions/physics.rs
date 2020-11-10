@@ -57,7 +57,9 @@ pub fn sub_step(body:&mut Body, all_entities:&Collection<Entity>)
                 }
                 
                 let other_body = Body::from(e);
-                if body.aabb2().intersects(&other_body.aabb2())
+                let v2:Vector2<f32> = body.pos - other_body.pos;
+                let v2 = v2.normalize();
+                if v.dot(v2) < 0.0 && body.aabb2().intersects(&other_body.aabb2())
                 {
                     collision = true;
                     break;
