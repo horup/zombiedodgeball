@@ -17,6 +17,7 @@ pub fn step(state:&mut State, delta:f32, iterations:i32, events:&[Event])
             speed:1.0,
             ..Actor::default()
         });
+        e.vel.x = 0.1;
     }
 
     

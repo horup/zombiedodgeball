@@ -1,10 +1,10 @@
 use cgmath::{Point2, Vector2, prelude::*};
 use collision::{Aabb2, prelude::*};
-use gamestate::{Collection, ID};
+use gamestate::{ID};
 
 use crate::data::{Entity, State};
 use crate::data::Event;
-use super::{util::{find_player_entity, find_player_entity_mut}};
+use super::{util::{find_player_entity}};
 
 #[derive(Copy, Clone)]
 pub struct Body {
@@ -30,14 +30,17 @@ impl From<&Entity> for Body {
     }
 }
 
-pub fn collision_check(entity:&Entity, other_entity:&Entity) -> bool
-{
-    let e1 = entity;
-    let e2 = other_entity;
-    e1.aabb2().intersects(&e2.aabb2())
+impl From<&mut Entity> for Body {
+    fn from(e: &mut Entity) -> Self {
+        Self {
+            id:e.id,
+            pos:e.pos,
+            vel:e.vel
+        }
+    }
 }
 
-pub fn sub_step(body:&mut Body, all_entities:&Collection<Entity>)
+pub fn move_body(body:&mut Body, other_bodies:&[Body])
 {
     let max = 0.1;
     let distance = body.vel.magnitude();
@@ -51,12 +54,11 @@ pub fn sub_step(body:&mut Body, all_entities:&Collection<Entity>)
             let body_before = *body;
             body.pos += *v;
             let mut collision = false;
-            for e in all_entities.iter() {
-                if e.id == body.id {
+            for other_body in other_bodies.iter() {
+                if other_body.id == body.id {
                     continue;
                 }
-                
-                let other_body = Body::from(e);
+
                 let v2:Vector2<f32> = body.pos - other_body.pos;
                 let v2 = v2.normalize();
                 if v.dot(v2) < 0.0 && body.aabb2().intersects(&other_body.aabb2())
@@ -77,37 +79,47 @@ pub fn sub_step(body:&mut Body, all_entities:&Collection<Entity>)
 
 pub fn step(state:&mut State, is_server:bool, events:&[Event])
 {
-    let max_step = 0.1;
-   // let all_entities = state.entities;
-    // update players
+    let all_bodies:Vec<Body> = state.entities.iter().map(|e| {
+        Body::from(e)
+    }).collect();
+
+    // process events from players first!
+    // players are assumed to have calculated their velocities them-seleves
     for e in events {
         if let Event::PlayerMove(player_id, v) = e {
             if let Some(player_entity) = find_player_entity(&state.entities, &player_id) {
-                let mut body = Body::from(&*player_entity);
+                let mut body = Body::from(player_entity);
                 body.vel = *v; 
-                sub_step(&mut body, &state.entities);
+                move_body(&mut body, &all_bodies);
 
                 if let Some(player_entity) = state.entities.get_entity_mut(player_entity.id) {
                     player_entity.pos = body.pos;
                     player_entity.vel = body.vel;
                 }
-                //player_entity.pos = body.pos;
-                //player_entity.vel = body.vel;
-
-              //  sub_step(&player_entity, &all_entities);
-
-                /*  player_entity.1.pos += *v;
-                
-                // make collision check!
-                for other_entity in state.entities.iter() {
-                    collision_check(&player_entity, &other_entity)
-                }*/
             }
     
         }
     }
 
+    let all_bodies:Vec<Body> = state.entities.iter().map(|e| {
+        Body {
+            id:e.id,
+            pos:e.pos,
+            vel:e.vel
+        }
+    }).collect();
+
     if is_server {
-        // update non-players
+        for e in state.entities.clone().iter() {
+            // update non-players
+            let mut body = Body::from(e);
+            move_body(&mut body, &all_bodies);
+            if let Some(e) = state.entities.get_entity_mut(body.id) {
+                e.pos = body.pos;
+                e.vel = body.vel;
+            }
+            
+        }
+
     }
 }

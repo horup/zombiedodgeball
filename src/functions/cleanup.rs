@@ -1,6 +1,5 @@
 use crate::data::State;
 
-
 pub fn step(state:&mut State)
 {
     for e in state.entities.clone().iter() {
