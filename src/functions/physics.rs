@@ -2,64 +2,47 @@ use cgmath::{Point2, Vector2, prelude::*};
 use collision::{Aabb2, prelude::*};
 use gamestate::{ID};
 
-use crate::data::{Entity, State};
 use crate::data::Event;
 use super::{util::{find_player_entity}};
 
-#[derive(Copy, Clone)]
-pub struct Body {
-    pub id:ID,
-    pub pos:Point2<f32>,
-    pub vel:Vector2<f32>
-}
+pub trait PhysicsBody : gamestate::Entity
+{
+    fn pos(&self) -> &Point2<f32>;
+    fn pos_mut(&mut self) -> &mut Point2<f32>;
+    fn vel(&self) -> &Vector2<f32>;
+    fn vel_mut(&mut self) -> &mut Vector2<f32>;
 
-impl Body {
-    pub fn aabb2(&self) -> Aabb2<f32> {
+    fn is_player(&self) -> bool
+    {
+        false
+    }
+    fn aabb2(&self) -> Aabb2<f32>
+    {
         let r = 0.5;
-        Aabb2::new(Point2::new(self.pos.x - r, self.pos.y - r), Point2::new(self.pos.x + r, self.pos.y + r))
+        Aabb2::new(Point2::new(self.pos().x - r, self.pos().y - r), Point2::new(self.pos().x + r, self.pos().y + r))
     }
 }
 
-impl From<&Entity> for Body {
-    fn from(e: &Entity) -> Self {
-        Self {
-            id:e.id,
-            pos:e.pos,
-            vel:e.vel
-        }
-    }
-}
-
-impl From<&mut Entity> for Body {
-    fn from(e: &mut Entity) -> Self {
-        Self {
-            id:e.id,
-            pos:e.pos,
-            vel:e.vel
-        }
-    }
-}
-
-pub fn move_body(body:&mut Body, other_bodies:&[Body])
+pub fn move_body<'a, T:PhysicsBody + 'a, I:Iterator<Item = &'a T> + Clone>(body:&mut T, iter:I)//left:&[&mut T], right:&[&mut T])
 {
     let max = 0.1;
-    let distance = body.vel.magnitude();
+    let distance = body.vel().magnitude();
     let mut remaining = distance;
     while remaining > 0.0 {
         let step = if distance < max { distance} else {max};
-        let dir = body.vel.normalize();
+        let dir = body.vel().normalize();
         let vs = [Vector2::new(0.0, dir.y * step), Vector2::new(dir.x * step, 0.0)];
         for v in vs.iter()
         {
-            let body_before = *body;
-            body.pos += *v;
+            let pos = *body.pos();
+            *body.pos_mut() += *v;
             let mut collision = false;
-            for other_body in other_bodies.iter() {
-                if other_body.id == body.id {
+            for other_body in iter.clone() {
+                if other_body.id() == body.id() {
                     continue;
                 }
 
-                let v2:Vector2<f32> = body.pos - other_body.pos;
+                let v2:Vector2<f32> = body.pos() - other_body.pos();
                 let v2 = v2.normalize();
                 if v.dot(v2) < 0.0 && body.aabb2().intersects(&other_body.aabb2())
                 {
@@ -69,7 +52,7 @@ pub fn move_body(body:&mut Body, other_bodies:&[Body])
             }
     
             if collision {
-                *body = body_before;
+                *body.pos_mut() = pos;
             }
         }
 
@@ -77,18 +60,18 @@ pub fn move_body(body:&mut Body, other_bodies:&[Body])
     }
 }
 
-pub fn step(state:&mut State, is_server:bool, events:&[Event])
+pub fn step<T:PhysicsBody>(bodies:&mut [&mut T], is_server:bool, events:&[Event])
 {
-    let all_bodies:Vec<Body> = state.entities.iter().map(|e| {
-        Body::from(e)
-    }).collect();
+    /*let all_bodies:Vec<PhysicsBody> = state.entities.iter().map(|e| {
+        PhysicsBody::from(e)
+    }).collect();*/
 
     // process events from players first!
     // players are assumed to have calculated their velocities them-seleves
-    for e in events {
+   /* for e in events {
         if let Event::PlayerMove(player_id, v) = e {
             if let Some(player_entity) = find_player_entity(&state.entities, &player_id) {
-                let mut body = Body::from(player_entity);
+                let mut body = PhysicsBody::from(player_entity);
                 body.vel = *v; 
                 move_body(&mut body, &all_bodies);
 
@@ -101,25 +84,65 @@ pub fn step(state:&mut State, is_server:bool, events:&[Event])
         }
     }
 
-    let all_bodies:Vec<Body> = state.entities.iter().map(|e| {
-        Body {
+    let all_bodies:Vec<PhysicsBody> = state.entities.iter().map(|e| {
+        PhysicsBody {
             id:e.id,
             pos:e.pos,
             vel:e.vel
         }
-    }).collect();
+    }).collect();*/
 
     if is_server {
-        for e in state.entities.clone().iter() {
+        /*for i in 0..bodies.len() {
+            if let Some(body) = bodies.get(i) {
+                let mut clone = **body;
+                move_body(&mut clone, bodies);
+                if let Some(body) = bodies.get_mut(i) {
+                    **body = clone;
+                }
+            }
+        }*/
+
+        let range = 0..bodies.len();
+        
+        for i in range {
+            let (left, right) = bodies.split_at_mut(i);
+            if let Some((body, right)) = right.split_first_mut() {
+                let iter = left.iter().map(|x| &**x);
+
+                move_body(*body, iter);
+            }
+        }
+
+       /* for i in 0..bodies.len() {
+            let rest:Vec<&Body> = bodies.get
+            let left = &bodies[0..i];
+            let right = &bodies[i..bodies.len()];
+            let m = bodies.get_mut(i).unwrap();
+            move_body(*m, &*left);
+        }*/
+        /*for i in 0..bodies.len() {
+            if let Some(body) = bodies.get_mut(i) {
+                move_body(*body, &*bodies);
+            }
+            /*let mut body = &mut bodies[i];
+            for other_body in bodies {
+                body.pos_mut().x = 0.0;
+            }*/
+        }*/
+       /* for e in bodies.iter() {
+            //let split = bodies.split(|x| x.id() != e.id());
+            //e.pos_mut().x=1.0;
             // update non-players
-            let mut body = Body::from(e);
+
+           /* let mut body = PhysicsBody::from(e);
             move_body(&mut body, &all_bodies);
             if let Some(e) = state.entities.get_entity_mut(body.id) {
                 e.pos = body.pos;
                 e.vel = body.vel;
-            }
+            }*/
             
-        }
+        }*/
 
     }
 }
