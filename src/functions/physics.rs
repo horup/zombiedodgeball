@@ -2,9 +2,6 @@ use cgmath::{Point2, Vector2, prelude::*};
 use collision::{Aabb2, prelude::*};
 use gamestate::{ID};
 
-use crate::data::Event;
-use super::{util::{find_player_entity}};
-
 pub trait PhysicsBody : gamestate::Entity
 {
     fn pos(&self) -> &Point2<f32>;
@@ -23,7 +20,14 @@ pub trait PhysicsBody : gamestate::Entity
     }
 }
 
-pub fn move_body<'a, T:PhysicsBody + 'a, I:Iterator<Item = &'a T> + Clone>(body:&mut T, iter:I)//left:&[&mut T], right:&[&mut T])
+#[derive(Copy, Clone, Debug)]
+pub enum PhysicsEvent
+{
+    ForceMovementEvent(ID, Vector2<f32>)
+}
+
+
+fn move_body<'a, T:PhysicsBody + 'a, I:IntoIterator<Item = &'a T> + Clone>(body:&mut T, other_bodies:&I)//left:&[&mut T], right:&[&mut T])
 {
     let max = 0.1;
     let distance = body.vel().magnitude();
@@ -37,7 +41,7 @@ pub fn move_body<'a, T:PhysicsBody + 'a, I:Iterator<Item = &'a T> + Clone>(body:
             let pos = *body.pos();
             *body.pos_mut() += *v;
             let mut collision = false;
-            for other_body in iter.clone() {
+            for other_body in other_bodies.clone() {
                 if other_body.id() == body.id() {
                     continue;
                 }
@@ -60,7 +64,7 @@ pub fn move_body<'a, T:PhysicsBody + 'a, I:Iterator<Item = &'a T> + Clone>(body:
     }
 }
 
-pub fn step<T:PhysicsBody>(bodies:&mut [&mut T], is_server:bool, events:&[Event])
+pub fn step<T:PhysicsBody, I:IntoIterator<Item = PhysicsEvent>>(bodies:&mut [&mut T], is_server:bool, events:I)
 {
     /*let all_bodies:Vec<PhysicsBody> = state.entities.iter().map(|e| {
         PhysicsBody::from(e)
@@ -103,14 +107,31 @@ pub fn step<T:PhysicsBody>(bodies:&mut [&mut T], is_server:bool, events:&[Event]
             }
         }*/
 
+        for e in events {
+            match e {
+                PhysicsEvent::ForceMovementEvent(entity_id, diff) => {
+                    let range = 0..bodies.len();
+                    for i in range {
+                        let (left, right) = bodies.split_at_mut(i);
+                        if let Some((body, right)) = right.split_first_mut() {
+                            let other_bodies = left.iter().chain(right.iter());
+                            let org = *body.vel();
+                            *body.vel_mut() = diff;
+                            move_body(*body, &other_bodies.map(|x| &**x));
+                            *body.vel_mut() = org;
+                        }
+                    }
+                },
+                _ => {}
+            }
+        }
+
         let range = 0..bodies.len();
-        
         for i in range {
             let (left, right) = bodies.split_at_mut(i);
             if let Some((body, right)) = right.split_first_mut() {
-                let iter = left.iter().map(|x| &**x);
-
-                move_body(*body, iter);
+                let other_bodies = left.iter().chain(right.iter());
+                move_body(*body, &other_bodies.map(|x| &**x));
             }
         }
 

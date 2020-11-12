@@ -1,6 +1,6 @@
 use cgmath::Vector2;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
-use crate::{data::{Actor, Event, Entity, State}};
+use crate::{functions::physics::PhysicsEvent, data::{Actor, Event, Entity, State}};
 use uuid::Uuid;
 
 struct Images {
@@ -91,11 +91,13 @@ impl Client
 
     pub fn update_player(&mut self, delta:f32, input:&Input, events:&mut Vec<Event>)
     {
+        let player_id = self.client_id;
+
         if let Some(e) = self.find_player_entity_mut() {
             if let Some(actor) = e.actor {
                 let mut vel = input.dpad;
                 vel = vel * actor.speed * delta;
-                let e = Event::PlayerMove(self.client_id, vel);
+                let e = Event::PhysicsEventFromPlayer(player_id, PhysicsEvent::ForceMovementEvent(e.id, vel));//Event::PlayerMove(self.client_id, vel);
                 events.push(e);
             }
             

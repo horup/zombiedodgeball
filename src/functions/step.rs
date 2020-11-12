@@ -11,9 +11,13 @@ pub fn step(state:&mut State, is_server:bool, delta:f32, iterations:i32, events:
         spawn::step(state, delta, iterations, events);
     }
 
-    for e in state.entities.iter() {
-        
-    }
     let mut slice:Vec<&mut Entity> = state.entities.iter_mut().collect();
-    physics::step(&mut slice, is_server, events);
+    let physics_events = events.iter().filter_map(|x| {
+        if let Event::PhysicsEventFromPlayer(player_id, e) = x {
+            return Some(*e);
+        }
+
+        None
+    });
+    physics::step(&mut slice, is_server, physics_events);
 }
