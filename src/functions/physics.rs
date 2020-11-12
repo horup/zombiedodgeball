@@ -112,6 +112,11 @@ pub fn step<T:PhysicsBody, I:IntoIterator<Item = PhysicsEvent>>(bodies:&mut [&mu
                 PhysicsEvent::ForceMovementEvent(entity_id, diff) => {
                     let range = 0..bodies.len();
                     for i in range {
+                        if let Some(b) = bodies.get(i) {
+                            if b.id() != entity_id {
+                                continue;
+                            } 
+                        }
                         let (left, right) = bodies.split_at_mut(i);
                         if let Some((body, right)) = right.split_first_mut() {
                             let other_bodies = left.iter().chain(right.iter());
