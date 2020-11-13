@@ -6,7 +6,7 @@ mod server;
 pub use server::*;
 mod client;
 pub use client::*;
-mod functions;
+mod systems;
 
 pub fn main() {
     let (mut ctx, mut event_loop) = ContextBuilder::new("my_game", "Cool Game Author")

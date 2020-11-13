@@ -1,7 +1,7 @@
 use cgmath::{Point2, Vector2};
 use collision::Aabb2;
 use gamestate::{DeltaSerializable, ID};
-use crate::functions::physics::PhysicsBody;
+use crate::systems::physics::PhysicsBody;
 
 use super::{Actor, Dodgeball, Player, Sprite};
 

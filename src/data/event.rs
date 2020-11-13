@@ -1,6 +1,6 @@
 use cgmath::Vector2;
 
-use crate::functions::physics::PhysicsEvent;
+use crate::systems::physics::PhysicsEvent;
 
 #[derive(Copy, Clone, Debug)]
 pub enum Event

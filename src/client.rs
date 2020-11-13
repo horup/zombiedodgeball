@@ -1,6 +1,6 @@
 use cgmath::Vector2;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
-use crate::{functions::physics::PhysicsEvent, data::{Actor, Event, Entity, State}};
+use crate::{systems::physics::PhysicsEvent, data::{Actor, Event, Entity, State}};
 use uuid::Uuid;
 
 struct Images {

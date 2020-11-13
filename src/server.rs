@@ -17,7 +17,7 @@ impl Server {
     pub fn update(&mut self, delta:f32, events:&[Event]) -> State
     {
         self.iterations += 1;
-        super::functions::step::step(&mut self.current, true, delta, self.iterations, events);
+        super::systems::step::step(&mut self.current, true, delta, self.iterations, events);
         self.current.clone()
       /*  systems::cleanup::cleanup(&mut self.current);
         
