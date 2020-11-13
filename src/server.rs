@@ -14,10 +14,16 @@ impl Server {
         }
     }
 
-    pub fn update(&mut self, delta:f32, events:&[Event]) -> State
+    pub fn update(&mut self, delta:f32, external_events:&[Event]) -> State
     {
+        let mut events = Vec::new();
         self.iterations += 1;
-        super::systems::step::step(&mut self.current, true, delta, self.iterations, events);
+        events.push(Event::Tick(self.iterations, delta));
+        for e in external_events {
+            events.push(*e);
+        }
+    
+        super::systems::step(&mut self.current, &mut events);
         self.current.clone()
       /*  systems::cleanup::cleanup(&mut self.current);
         
