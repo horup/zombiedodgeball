@@ -16,13 +16,21 @@ pub trait PhysicsBody : gamestate::Entity
 }
 
 #[derive(Copy, Clone, Debug)]
+pub struct CollisionWithEntity
+{
+    pub entity_id:ID,
+    pub other_entity_id:ID
+}
+
+#[derive(Copy, Clone, Debug)]
 pub enum PhysicsEvent
 {
-    ForceMovementEvent(ID, Vector2<f32>)
+    ForceMovementEvent(ID, Vector2<f32>),
+    CollisionWithEntityEvent(CollisionWithEntity)
 }
 
 
-fn move_body<'a, T:PhysicsBody + 'a, I:IntoIterator<Item = &'a T> + Clone>(body:&mut T, other_bodies:&I)//left:&[&mut T], right:&[&mut T])
+fn move_body<'a, T:PhysicsBody + 'a, I:IntoIterator<Item = &'a T> + Clone>(body:&mut T, other_bodies:&I, result:&mut Vec<PhysicsEvent>)
 {
     let max = 0.1;
     let distance = body.vel().magnitude();
@@ -46,6 +54,10 @@ fn move_body<'a, T:PhysicsBody + 'a, I:IntoIterator<Item = &'a T> + Clone>(body:
                 if v.dot(v2) < 0.0 && body.aabb2().intersects(&other_body.aabb2())
                 {
                     collision = true;
+                    result.push(PhysicsEvent::CollisionWithEntityEvent(CollisionWithEntity {
+                        entity_id:body.id(),
+                        other_entity_id:other_body.id()
+                    }));
                     break;
                 }
             }
@@ -59,8 +71,9 @@ fn move_body<'a, T:PhysicsBody + 'a, I:IntoIterator<Item = &'a T> + Clone>(body:
     }
 }
 
-pub fn step<T:PhysicsBody, I:IntoIterator<Item = PhysicsEvent>>(bodies:&mut [&mut T], is_server:bool, events:I)
+pub fn step<T:PhysicsBody, I:IntoIterator<Item = PhysicsEvent>>(bodies:&mut [&mut T], is_server:bool, events:I) -> Vec<PhysicsEvent>
 {
+    let mut result = Vec::new();
     for e in events {
         match e {
             PhysicsEvent::ForceMovementEvent(entity_id, diff) => {
@@ -76,7 +89,7 @@ pub fn step<T:PhysicsBody, I:IntoIterator<Item = PhysicsEvent>>(bodies:&mut [&mu
                         let other_bodies = left.iter().chain(right.iter());
                         let org = *body.vel();
                         *body.vel_mut() = diff;
-                        move_body(*body, &other_bodies.map(|x| &**x));
+                        move_body(*body, &other_bodies.map(|x| &**x), &mut result);
                         *body.vel_mut() = org;
                     }
                 }
@@ -92,8 +105,10 @@ pub fn step<T:PhysicsBody, I:IntoIterator<Item = PhysicsEvent>>(bodies:&mut [&mu
             let (left, right) = bodies.split_at_mut(i);
             if let Some((body, right)) = right.split_first_mut() {
                 let other_bodies = left.iter().chain(right.iter());
-                move_body(*body, &other_bodies.map(|x| &**x));
+                move_body(*body, &other_bodies.map(|x| &**x), &mut result);
             }
         }
     }
+
+    return result;
 }

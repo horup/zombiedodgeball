@@ -1,6 +1,6 @@
 use crate::data::{Entity, Event, State};
 
-use super::{cleanup, physics, spawn};
+use super::{cleanup, physics, shooter, spawn};
 
 
 pub fn step(state:&mut State, is_server:bool, delta:f32, iterations:i32, events:&[Event])
@@ -20,4 +20,5 @@ pub fn step(state:&mut State, is_server:bool, delta:f32, iterations:i32, events:
         None
     });
     physics::step(&mut slice, is_server, physics_events);
+    shooter::step(state, is_server, delta);
 }

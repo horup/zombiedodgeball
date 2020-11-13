@@ -3,7 +3,6 @@ use cgmath::{Point2, Vector2};
 use crate::{data::{Actor, Event, Player, Sprite, State}};
 
 
-
 pub fn step(state:&mut State, delta:f32, iterations:i32, events:&[Event])
 {
     if iterations % 20 == 0 {
@@ -38,7 +37,7 @@ pub fn step(state:&mut State, delta:f32, iterations:i32, events:&[Event])
                         speed:1.0,
                         ..Actor::default()
                     });
-                    e.player = Some(Player {client_id:*client_id});
+                    e.player = Some(Player {client_id:*client_id, ..Player::default()});
                     e.sprite = Some(Sprite::default());
                     println!("spawning player entity {:?}", e.id);
             }
