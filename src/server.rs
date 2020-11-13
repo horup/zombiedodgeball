@@ -23,7 +23,7 @@ impl Server {
             events.push(*e);
         }
     
-        super::systems::step(&mut self.current, &mut events);
+        super::systems::step(&mut self.current, true, &mut events);
         self.current.clone()
       /*  systems::cleanup::cleanup(&mut self.current);
         

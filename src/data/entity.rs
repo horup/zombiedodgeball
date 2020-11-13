@@ -1,7 +1,6 @@
 use cgmath::{Point2, Vector2};
 use collision::Aabb2;
 use gamestate::{DeltaSerializable, ID};
-use crate::systems::physics::PhysicsBody;
 
 use super::{Actor, Dodgeball, Player, Sprite};
 
@@ -57,23 +56,5 @@ impl DeltaSerializable  for Entity
 
     fn delta_deserialize(previous:&Self, read:&mut dyn std::io::Read) -> std::io::Result<Self> where Self : Sized {
         todo!()
-    }
-}
-
-impl PhysicsBody for Entity {
-    fn pos(&self) -> &Point2<f32> {
-        &self.pos
-    }
-
-    fn pos_mut(&mut self) -> &mut Point2<f32> {
-        &mut self.pos
-    }
-
-    fn vel(&self) -> &Vector2<f32> {
-        &self.vel
-    }
-
-    fn vel_mut(&mut self) -> &mut Vector2<f32> {
-        &mut self.vel
     }
 }

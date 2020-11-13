@@ -1,6 +1,6 @@
 use crate::data::{Event, State};
 
-pub fn step(state:&mut State, events:&mut Vec<Event>)
+pub fn step(state:&mut State, is_server:bool, events:&Vec<Event>) -> Vec<Event>
 {
     for e in events {
         if let Event::Tick(_, _) = e {
@@ -11,4 +11,6 @@ pub fn step(state:&mut State, events:&mut Vec<Event>)
             }
         }
     }
+
+    Vec::new()
 }
