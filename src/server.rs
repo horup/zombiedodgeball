@@ -1,4 +1,4 @@
-use crate::{event::Event, state::World};
+use crate::{event::Event, world::World};
 
 pub struct Server {
     pub current:World,

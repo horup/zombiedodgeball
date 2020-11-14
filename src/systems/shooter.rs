@@ -1,4 +1,4 @@
-use crate::{event::Event, state::World};
+use crate::{event::Event, world::World};
 
 
 pub fn step(state:&mut World, is_server:bool, delta:f32, events:&mut Vec<Event>) 

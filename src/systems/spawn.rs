@@ -1,6 +1,6 @@
 use cgmath::{Point2, Vector2};
 
-use crate::{entity::{actor::Actor, sprite::Sprite}, event::Event, entity::player::Player, state::World};
+use crate::{entity::{actor::Actor, sprite::Sprite}, event::Event, entity::player::Player, world::World};
 
 
 pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push_event:&mut F)

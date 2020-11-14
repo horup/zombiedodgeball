@@ -1,6 +1,6 @@
 use event::Event;
 use ggez::{Context, ContextBuilder, GameResult, timer};
-mod state;
+mod world;
 mod entity;
 mod server;
 mod event;
