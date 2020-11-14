@@ -18,11 +18,10 @@ pub fn step(state:&mut State, is_server:bool, events:&Vec<Event>)
         spawn::step
     ];
 
+    let f = |e| new_events.push(e);
     for system in systems.iter() {
         for e in events {
-            for new_event in system(state, is_server, e) {
-                new_events.push(new_event);
-            }
+            system(state, is_server, e, &f);
         }
         
     }

@@ -3,9 +3,8 @@ use cgmath::{Point2, Vector2};
 use crate::{data::{Actor, Event, Player, Sprite, State}};
 
 
-pub fn step(state:&mut State, is_server:bool, event:&Event) -> Vec<Event>
+pub fn step<F:FnMut(Event)>(state:&mut State, is_server:bool, event:&Event, push_event:&F)
 {
-    let mut new_events = Vec::new();
     match event {
         Event::Tick(iterations, delta) => {
             if iterations % 20 == 0 {
@@ -45,6 +44,4 @@ pub fn step(state:&mut State, is_server:bool, event:&Event) -> Vec<Event>
         },
         _ => {}
     }
-   
-    new_events
 }

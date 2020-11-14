@@ -53,7 +53,7 @@ fn move_body(state:&mut State, events:&mut Vec<Event>)
     }
 }*/
 
-pub fn step(state: &mut State, is_server: bool, event:&Event) -> Vec<Event> {
+pub fn step<F:FnMut(Event)>(state: &mut State, is_server: bool, event:&Event, push_event:&F) {
     match event {
         Event::ForceMovement(id, diff) => {
 
@@ -63,7 +63,6 @@ pub fn step(state: &mut State, is_server: bool, event:&Event) -> Vec<Event> {
         }
         _ => {}
     }
-    return Vec::new();
 }
 
 /*
