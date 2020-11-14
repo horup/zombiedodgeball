@@ -1,6 +1,5 @@
 use gamestate::Collection;
-
-use crate::entity::Entity;
+use crate::world::Entity;
 
 
 pub fn find_player_entity_mut<'a>(entities:&'a mut Collection<Entity>, player_id:&u128) -> Option<&'a mut Entity>
