@@ -3,7 +3,7 @@ use cgmath::{Point2, Vector2};
 use crate::{data::{Actor, Event, Player, Sprite, State}};
 
 
-pub fn step<F:FnMut(Event)>(state:&mut State, is_server:bool, event:&Event, push_event:&F)
+pub fn step<F:FnMut(Event)>(state:&mut State, is_server:bool, event:&Event, push_event:&mut F)
 {
     match event {
         Event::Tick(iterations, delta) => {

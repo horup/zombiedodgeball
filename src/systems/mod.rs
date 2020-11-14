@@ -6,8 +6,6 @@ pub mod cleanup;
 pub mod physics;
 pub mod shooter;
 
-pub type System = fn(&mut State, bool, &Vec<Event>) -> Vec<Event>;
-
 pub fn step(state:&mut State, is_server:bool, events:&Vec<Event>)
 {
     let mut new_events = Vec::new();
@@ -18,10 +16,10 @@ pub fn step(state:&mut State, is_server:bool, events:&Vec<Event>)
         spawn::step
     ];
 
-    let f = |e| new_events.push(e);
+    let mut f = |e| new_events.push(e);
     for system in systems.iter() {
         for e in events {
-            system(state, is_server, e, &f);
+            system(state, is_server, e, &mut f);
         }
         
     }

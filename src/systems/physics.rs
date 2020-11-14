@@ -53,7 +53,7 @@ fn move_body(state:&mut State, events:&mut Vec<Event>)
     }
 }*/
 
-fn compute_movement(entity:&Entity, diff:&Vector2<f32>, state:&State) -> Point2<f32>
+fn compute_movement<F:FnMut(Event)>(entity:&Entity, diff:&Vector2<f32>, state:&State, push_event:&mut F) -> Point2<f32>
 {
     let mut res = entity.pos;
     let max = 0.1;
@@ -78,6 +78,7 @@ fn compute_movement(entity:&Entity, diff:&Vector2<f32>, state:&State) -> Point2<
                     
                     if aabb2(&p).intersects(&aabb2(&other_entity.pos)) {
                         collision = true;
+                        push_event(Event::Collision(entity.id, other_entity.id));
                         break;
                     } 
                 }
@@ -94,11 +95,11 @@ fn compute_movement(entity:&Entity, diff:&Vector2<f32>, state:&State) -> Point2<
 }
 
 
-pub fn step<F:FnMut(Event)>(state: &mut State, is_server: bool, event:&Event, push_event:&F) {
+pub fn step<F:FnMut(Event)>(state: &mut State, is_server: bool, event:&Event, push_event:&mut F) {
     match event {
         Event::ForceMovement(id, diff) => {
             if let Some(e) = state.entities.get_entity(*id) {
-                let res = compute_movement(e, diff, state);
+                let res = compute_movement(e, diff, state, push_event);
                 
 
                 if let Some(e) = state.entities.get_entity_mut(*id) {
@@ -111,7 +112,7 @@ pub fn step<F:FnMut(Event)>(state: &mut State, is_server: bool, event:&Event, pu
             // fixme can be improved without clone I believe
             for e in state.entities.clone().iter() {
                 let v = e.vel * *delta;
-                let res = compute_movement(e, &v, state);
+                let res = compute_movement(e, &v, state, push_event);
                 if let Some(e) = state.entities.get_entity_mut(e.id) {
                     e.pos = res;
                 }
