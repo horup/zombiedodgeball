@@ -1,8 +1,9 @@
-use data::Event;
+use event::Event;
 use ggez::{Context, ContextBuilder, GameResult, timer};
-use ggez::event::{self, EventHandler};
-mod data;
+mod state;
+mod entity;
 mod server;
+mod event;
 pub use server::*;
 mod client;
 pub use client::*;
@@ -13,7 +14,7 @@ pub fn main() {
         .build()
 		.expect("aieee, could not create ggez context!");
     let mut zombie_dodge_ball = Main::new(&mut ctx);
-    match event::run(&mut ctx, &mut event_loop, &mut zombie_dodge_ball) {
+    match ggez::event::run(&mut ctx, &mut event_loop, &mut zombie_dodge_ball) {
         Ok(_) => println!("Exited cleanly."),
         Err(e) => println!("Error occured: {}", e)
     }
@@ -38,7 +39,7 @@ impl Main {
     }
 }
 
-impl EventHandler for Main {
+impl ggez::event::EventHandler for Main {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         let delta = 1.0 / self.tick_rate_ps as f32;
         if timer::check_update_time(ctx, self.tick_rate_ps){

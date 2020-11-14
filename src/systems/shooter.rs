@@ -1,4 +1,5 @@
-use crate::data::{Event, State};
+use crate::{event::Event, state::State};
+
 
 pub fn step(state:&mut State, is_server:bool, delta:f32, events:&mut Vec<Event>) 
 {

@@ -2,7 +2,7 @@ use cgmath::{prelude::*, Point2, Vector2};
 use collision::{prelude::*, Aabb2};
 use gamestate::ID;
 
-use crate::data::{Entity, Event, State};
+use crate::{entity::Entity, event::Event, state::State};
 
 fn aabb2(pos:&Point2<f32>) -> Aabb2<f32> {
     let r = 0.5;

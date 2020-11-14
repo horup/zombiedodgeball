@@ -1,15 +1,4 @@
-mod entity;
-pub use entity::*;
-mod actor;
-pub use actor::*;
-mod sprite;
-pub use sprite::*;
-mod player;
-pub use player::*;
-mod dodgeball;
-pub use dodgeball::*;
-mod event;
-pub use event::*;
+use crate::entity::Entity;
 
 #[derive(Clone)]
 pub struct State {

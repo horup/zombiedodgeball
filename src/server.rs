@@ -1,4 +1,4 @@
-use crate::{data::{Event, State}};
+use crate::{event::Event, state::State};
 
 pub struct Server {
     pub current:State,

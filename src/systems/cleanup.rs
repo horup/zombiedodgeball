@@ -1,4 +1,4 @@
-use crate::data::{Event, State};
+use crate::{event::Event, state::State};
 
 pub fn step<F:FnMut(Event)>(state:&mut State, is_server:bool, event:&Event, push_event:&mut F)
 {

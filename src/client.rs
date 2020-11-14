@@ -1,7 +1,8 @@
 use cgmath::Vector2;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
-use crate::{ data::{Actor, Event, Entity, State}};
 use uuid::Uuid;
+
+use crate::{entity::Entity, event::Event, state::State};
 
 struct Images {
     pub spritesheet:ImageGeneric<GlBackendSpec>

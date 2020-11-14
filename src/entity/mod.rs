@@ -2,7 +2,12 @@ use cgmath::{Point2, Vector2};
 use collision::Aabb2;
 use gamestate::{DeltaSerializable, ID};
 
-use super::{Actor, Dodgeball, Player, Sprite};
+use self::{actor::Actor, dodgeball::Dodgeball, player::Player, sprite::Sprite};
+
+pub mod actor;
+pub mod dodgeball;
+pub mod player;
+pub mod sprite;
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Entity
