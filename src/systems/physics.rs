@@ -4,11 +4,11 @@ use gamestate::ID;
 
 use crate::data::{Entity, Event, State};
 
-fn aabb2(e: &Entity) -> Aabb2<f32> {
+fn aabb2(pos:&Point2<f32>) -> Aabb2<f32> {
     let r = 0.5;
     Aabb2::new(
-        Point2::new(e.pos.x - r, e.pos.y - r),
-        Point2::new(e.pos.x + r, e.pos.y + r),
+        Point2::new(pos.x - r, pos.y - r),
+        Point2::new(pos.x + r, pos.y + r),
     )
 }
 /*
@@ -53,13 +53,69 @@ fn move_body(state:&mut State, events:&mut Vec<Event>)
     }
 }*/
 
+fn compute_movement(entity:&Entity, diff:&Vector2<f32>, state:&State) -> Point2<f32>
+{
+    let mut res = entity.pos;
+    let max = 0.1;
+    let distance = diff.magnitude();
+    if distance <= 0.0 {
+        return res;
+    }
+
+    let mut remaining = distance;
+    while remaining > 0.0 {
+        let step = if distance < max { distance} else {max};
+        let dir = diff.normalize();
+        let vs = [Vector2::new(0.0, dir.y * step), Vector2::new(dir.x * step, 0.0)];
+        for v in vs.iter()
+        {
+            let mut collision = false;
+            let mut p:Point2<f32> = res + v;
+            for other_entity in state.entities.iter().filter(|e| e.id != entity.id) {
+                let v2 = res - other_entity.pos;
+                let v2 = v2.normalize();
+                if v.dot(v2) < 0.0 {
+                    
+                    if aabb2(&p).intersects(&aabb2(&other_entity.pos)) {
+                        collision = true;
+                        break;
+                    } 
+                }
+            }
+            if !collision {
+                res = p;
+            }
+        }
+
+        remaining -= step;
+    }
+
+    res
+}
+
+
 pub fn step<F:FnMut(Event)>(state: &mut State, is_server: bool, event:&Event, push_event:&F) {
     match event {
         Event::ForceMovement(id, diff) => {
+            if let Some(e) = state.entities.get_entity(*id) {
+                let res = compute_movement(e, diff, state);
+                
 
+                if let Some(e) = state.entities.get_entity_mut(*id) {
+                    e.pos = res;
+                }
+            }
         }
-        Event::Tick(iterations, delta) => {
-            
+        Event::Tick(_, delta) => {
+
+            // fixme can be improved without clone I believe
+            for e in state.entities.clone().iter() {
+                let v = e.vel * *delta;
+                let res = compute_movement(e, &v, state);
+                if let Some(e) = state.entities.get_entity_mut(e.id) {
+                    e.pos = res;
+                }
+            }
         }
         _ => {}
     }

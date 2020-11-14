@@ -18,7 +18,7 @@ pub fn step<F:FnMut(Event)>(state:&mut State, is_server:bool, event:&Event, push
                     speed:1.0,
                     ..Actor::default()
                 });
-                e.vel.x = 0.1;
+                e.vel.x = 1.0;
             }
         },
         Event::PlayerSpawn(player_id) => {
