@@ -19,9 +19,12 @@ pub fn step(state:&mut State, is_server:bool, events:&Vec<Event>)
     ];
 
     for system in systems.iter() {
-        for new_event in system(state, is_server, events) {
-            new_events.push(new_event);
+        for e in events {
+            for new_event in system(state, is_server, e) {
+                new_events.push(new_event);
+            }
         }
+        
     }
 
     if new_events.len() > 0 {
