@@ -1,7 +1,7 @@
-use crate::{event::Event, state::State};
+use crate::{event::Event, state::World};
 
 
-pub fn step(state:&mut State, is_server:bool, delta:f32, events:&mut Vec<Event>) 
+pub fn step(state:&mut World, is_server:bool, delta:f32, events:&mut Vec<Event>) 
 {
     if is_server {
         // do cooldown of ability

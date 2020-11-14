@@ -1,4 +1,4 @@
-use crate::{event::Event, state::State};
+use crate::{event::Event, state::World};
 
 pub mod util;
 pub mod spawn;
@@ -6,7 +6,7 @@ pub mod cleanup;
 pub mod physics;
 pub mod shooter;
 
-pub fn step(state:&mut State, is_server:bool, events:&Vec<Event>)
+pub fn step(state:&mut World, is_server:bool, events:&Vec<Event>)
 {
     let mut new_events = Vec::new();
     let systems = 

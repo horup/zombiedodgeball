@@ -2,7 +2,7 @@ use cgmath::{prelude::*, Point2, Vector2};
 use collision::{prelude::*, Aabb2};
 use gamestate::ID;
 
-use crate::{entity::Entity, event::Event, state::State};
+use crate::{entity::Entity, event::Event, state::World};
 
 fn aabb2(pos:&Point2<f32>) -> Aabb2<f32> {
     let r = 0.5;
@@ -53,7 +53,7 @@ fn move_body(state:&mut State, events:&mut Vec<Event>)
     }
 }*/
 
-fn compute_movement<F:FnMut(Event)>(entity:&Entity, diff:&Vector2<f32>, state:&State, push_event:&mut F) -> Point2<f32>
+fn compute_movement<F:FnMut(Event)>(entity:&Entity, diff:&Vector2<f32>, state:&World, push_event:&mut F) -> Point2<f32>
 {
     let mut res = entity.pos;
     let max = 0.1;
@@ -95,7 +95,7 @@ fn compute_movement<F:FnMut(Event)>(entity:&Entity, diff:&Vector2<f32>, state:&S
 }
 
 
-pub fn step<F:FnMut(Event)>(state: &mut State, is_server: bool, event:&Event, push_event:&mut F) {
+pub fn step<F:FnMut(Event)>(state: &mut World, is_server: bool, event:&Event, push_event:&mut F) {
     match event {
         Event::ForceMovement(id, diff) => {
             if let Some(e) = state.entities.get_entity(*id) {

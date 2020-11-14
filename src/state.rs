@@ -1,12 +1,12 @@
 use crate::entity::Entity;
 
 #[derive(Clone)]
-pub struct State {
+pub struct World {
     pub time:f32,
     pub entities:gamestate::Collection<Entity>
 }
 
-impl State {
+impl World {
     pub fn new() -> Self {
         Self {
             time:0.0,

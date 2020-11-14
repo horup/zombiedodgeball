@@ -1,7 +1,7 @@
-use crate::{event::Event, state::State};
+use crate::{event::Event, state::World};
 
 pub struct Server {
-    pub current:State,
+    pub current:World,
     pub iterations:i32
 }
 
@@ -9,12 +9,12 @@ impl Server {
     pub fn new() -> Self
     {
         Self {
-            current:State::new(),
+            current:World::new(),
             iterations:0
         }
     }
 
-    pub fn update(&mut self, delta:f32, external_events:&[Event]) -> State
+    pub fn update(&mut self, delta:f32, external_events:&[Event]) -> World
     {
         let mut events = Vec::new();
         self.iterations += 1;

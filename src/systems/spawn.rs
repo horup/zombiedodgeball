@@ -1,9 +1,9 @@
 use cgmath::{Point2, Vector2};
 
-use crate::{entity::{actor::Actor, sprite::Sprite}, event::Event, entity::player::Player, state::State};
+use crate::{entity::{actor::Actor, sprite::Sprite}, event::Event, entity::player::Player, state::World};
 
 
-pub fn step<F:FnMut(Event)>(state:&mut State, is_server:bool, event:&Event, push_event:&mut F)
+pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push_event:&mut F)
 {
     match event {
         Event::Tick(iterations, delta) => {

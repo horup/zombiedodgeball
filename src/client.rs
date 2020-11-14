@@ -2,15 +2,15 @@ use cgmath::Vector2;
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
 use uuid::Uuid;
 
-use crate::{entity::Entity, event::Event, state::State};
+use crate::{entity::Entity, event::Event, state::World};
 
 struct Images {
     pub spritesheet:ImageGeneric<GlBackendSpec>
 }
 pub struct Client
 {
-    current:State,
-    previous:State,
+    current:World,
+    previous:World,
     images:Images,
     client_id:u128
 }
@@ -37,7 +37,7 @@ impl Default for Input
 
 impl Client
 {
-    pub fn update(&mut self, new_state:State)
+    pub fn update(&mut self, new_state:World)
     {
         self.previous = self.current.clone();
         self.current = new_state;
@@ -54,8 +54,8 @@ impl Client
         let spritesheet = graphics::Image::from_rgba8(ctx, spritesheet.width() as u16, spritesheet.height() as u16, &spritesheet).unwrap();
 
         Self {
-            current:State::new(),
-            previous:State::new(),
+            current:World::new(),
+            previous:World::new(),
             images:Images {
                 spritesheet:spritesheet
             },
