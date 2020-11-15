@@ -9,3 +9,6 @@ pub use missile::*;
 
 mod shooter;
 pub use shooter::*;
+
+mod collision;
+pub use self::collision::*;

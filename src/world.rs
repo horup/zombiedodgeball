@@ -2,20 +2,19 @@ use cgmath::{Point2, Vector2};
 use cgmath::prelude::*;
 use gamestate::{DeltaSerializable, ID};
 
-use crate::{components::{Missile, Player, Shooter, Sprite}};
+use crate::{components::{Collision, Missile, Player, Shooter, Sprite}};
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Entity
 {
     pub id:ID,
-    pub delete:bool,
-    pub collidable:bool,
     pub pos:Point2<f32>,
     pub vel:Vector2<f32>,
     pub sprite:Option<Sprite>,
     pub player:Option<Player>,
     pub missile:Option<Missile>,
-    pub shooter:Option<Shooter>
+    pub shooter:Option<Shooter>,
+    pub collision:Option<Collision>
 }
 
 impl gamestate::Entity for Entity 
@@ -23,14 +22,13 @@ impl gamestate::Entity for Entity
     fn new(id:ID) -> Self {
         Self {
             id:id,
-            delete:false,
-            collidable:true,
             pos:Point2 {x:0.0, y:0.0},
             vel:Vector2 {x:0.0, y:0.0},
             sprite:None,
             player:None,
             missile:None,
-            shooter:None
+            shooter:None,
+            collision:None
         }
     }
 
@@ -77,7 +75,44 @@ impl World {
             x:2.0,
             ..Sprite::default()
         });
+        e.collision = Some(Collision {
+            ..Collision::default()
+        });
         
+        Some(e)
+    }
+
+    pub fn spawn_player(&mut self, pos:Point2<f32>, player_id:u128) -> Option<&mut Entity> {
+        let e = self.entities.new_entity_replicated()?;
+        e.pos = pos;
+        e.sprite = Some(Sprite {
+            x:0.0,
+            ..Sprite::default()
+        });
+        e.player = Some(Player {
+            client_id:player_id
+        });
+        e.shooter = Some(Shooter {
+            ..Shooter::default()
+        });
+        e.collision = Some(Collision {
+            ..Collision::default()
+        });
+
+        Some(e)
+    }
+
+    pub fn spawn_zombie(&mut self, pos:Point2<f32>) -> Option<&mut Entity> {
+        let e = self.entities.new_entity_replicated()?;
+        e.pos = pos;
+        e.sprite = Some(Sprite {
+            x:1.0,
+            ..Sprite::default()
+        });
+        e.collision = Some(Collision {
+            ..Collision::default()
+        });
+
         Some(e)
     }
 }

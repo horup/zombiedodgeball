@@ -1,6 +1,5 @@
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub struct Player
 {
-    pub client_id:u128,
-    pub shoot:bool
+    pub client_id:u128
 }

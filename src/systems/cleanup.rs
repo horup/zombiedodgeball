@@ -7,13 +7,19 @@ pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push
         Event::DeleteEntity(id) => {
             state.entities.delete_entity(*id);
         },
+        Event::Tick(_, _) => {
+            for e in state.entities.iter() {
+                let mut f = || {
+                   // println!("{}", e.missile?.exploded);
+                    if e.missile?.exploded {
+                        println!("test");
+                        push_event(Event::DeleteEntity(e.id));
+                    }
+                    Some(())
+                };
+                f();
+            }
+        },
         _ => {}
     }
- /*   if let Event::Tick(_, _) = event {
-        for e in state.entities.clone().iter() {
-            if e.delete == true {
-                state.entities.delete_entity(e.id);
-            }
-        }
-    }*/
 }

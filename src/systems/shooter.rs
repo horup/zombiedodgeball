@@ -1,3 +1,5 @@
+use cgmath::Vector2;
+
 use crate::{event::Event, world::World};
 
 
@@ -25,13 +27,18 @@ pub fn step<F:FnMut(Event)>(world:&mut World, is_server:bool, event:&Event, push
                 }
             }
             Event::Collision(id1, id2) => {
-                if let Some((e1, e2)) = world.entities.get_entity_pair(*id1, *id2)
-                {
-                    if let Some(missile) = e1.missile {
-                        push_event(Event::DeleteEntity(e1.id));
-                        push_event(Event::DeleteEntity(e2.id));
+                let mut f = || {
+                    let e1 = world.entities.get_entity_mut(*id1)?;
+                    if e1.missile != None {
+                        let missile = e1.missile.as_mut()?;
+                        missile.exploded = true;
+                        e1.collision = None;
+                        e1.vel = Vector2::new(0.0, 0.0);
+                        world.entities.delete_entity(*id2);
                     }
-                }
+                    Some(())
+                };
+                f();
             },
             _ => {}
         }
