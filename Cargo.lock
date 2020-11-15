@@ -668,7 +668,7 @@ checksum = "a06f77d526c1a601b7c4cdd98f54b5eaabffc14d5f2f0296febdc7f357c6d3ba"
 [[package]]
 name = "gamestate"
 version = "0.1.0"
-source = "git+https://github.com/horup/gamestate-rs.git?branch=main#0d00db0a352a4ae8e9e9e93f896253e0c1440a24"
+source = "git+https://github.com/horup/gamestate-rs.git?branch=main#b3dee392bed65ba2b690dce3aaf25a7537dc41f3"
 
 [[package]]
 name = "generic-array"
@@ -2505,9 +2505,9 @@ dependencies = [
 
 [[package]]
 name = "weezl"
-version = "0.1.2"
+version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8795d6e0e17485803cc10ef126bb8c0d59b7c61b219d66cfe0b3216dd0e8580a"
+checksum = "3e2bb9fc8309084dd7cd651336673844c1d47f8ef6d2091ec160b27f5c4aa277"
 
 [[package]]
 name = "winapi"

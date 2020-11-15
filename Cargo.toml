@@ -14,7 +14,3 @@ gamestate = {git = "https://github.com/horup/gamestate-rs.git", branch = "main"}
 uuid = {version = "0.8.1", features = ["v4"]}
 rand = "0.7.3"
 collision = "0.20.1"
-
-
-[unstable]
-iter_map_while = 'yes'

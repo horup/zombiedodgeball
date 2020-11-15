@@ -15,7 +15,7 @@ pub struct Entity
     pub actor:Option<Actor>,
     pub player:Option<Player>,
     pub dodgeball:Option<Dodgeball>,
-    pub missile:Option<Missile>
+    pub missile:Missile
 }
 
 impl gamestate::Entity for Entity 
@@ -31,7 +31,7 @@ impl gamestate::Entity for Entity
             sprite:None,
             player:None,
             dodgeball:None,
-            missile:None
+            missile:Missile::default()
         }
     }
 

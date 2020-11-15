@@ -8,6 +8,7 @@ pub enum Event
     ForceMovement(ID, Vector2<f32>),
     ShootAt(ID, Point2<f32>),
     Tick(i32, f32),
-    Collision(ID, ID)
+    Collision(ID, ID),
+    DeleteEntity(ID)
 }
 
