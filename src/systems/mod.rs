@@ -13,7 +13,8 @@ pub fn step(state:&mut World, is_server:bool, events:&Vec<Event>)
     [
         cleanup::step,
         physics::step,
-        spawn::step
+        spawn::step,
+        shooter::step
     ];
 
     let mut f = |e| new_events.push(e);
