@@ -7,18 +7,12 @@ pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push
         match event {
             Event::ShootAt(my_id, at) => {
                 if let Some(my_e) = state.entities.get_entity(*my_id) {
-                    if my_e.missile.attached {
-
-                    }
                 }
             }
             Event::Tick(_, delta) => {
-                // do cooldown of ability
                 for e in state.entities.iter_mut() {
-                    if let Some(actor) = &mut e.actor {
-                        if actor.cooldown > 0.0 {
-                            actor.cooldown = f32::max(0.0, actor.cooldown - delta);
-                        }
+                    if e.shooter.attached && e.shooter.cooldown > 0.0 {
+                        e.shooter.cooldown = f32::max(e.shooter.cooldown - delta, 0.0);
                     }
                 }
             }

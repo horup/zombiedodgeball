@@ -1,7 +1,7 @@
 use cgmath::{Point2, Vector2};
 
-use crate::{event::Event, world::World};
-use crate::components::{Sprite, Actor, Player};
+use crate::{event::Event, components::Shooter, world::World};
+use crate::components::{Sprite, Player};
 
 
 pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push_event:&mut F)
@@ -14,10 +14,6 @@ pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push
                 e.sprite = Some(Sprite {
                     x:1.0,
                     ..Sprite::default()
-                });
-                e.actor = Some(Actor {
-                    speed:1.0,
-                    ..Actor::default()
                 });
                 e.vel.x = 1.0;
             }
@@ -34,10 +30,10 @@ pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push
                     // player entity does not exist, spawn him
                     let e = state.entities.new_entity_replicated().expect("could not player entity");
                     e.pos = Point2::new(7.0, 15.0);
-                    e.actor = Some(Actor {
-                        speed:1.0,
-                        ..Actor::default()
-                    });
+                    e.shooter = Shooter {
+                        attached:true,
+                        cooldown:0.0
+                    };
                     e.player = Some(Player {client_id:*player_id, ..Player::default()});
                     e.sprite = Some(Sprite::default());
                     println!("spawning player entity {:?}", e.id);

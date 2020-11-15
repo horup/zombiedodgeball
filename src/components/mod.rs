@@ -1,9 +1,3 @@
-mod actor;
-pub use actor::*;
-
-mod dodgeball;
-pub use dodgeball::*;
-
 mod player;
 pub use player::*;
 
@@ -12,3 +6,6 @@ pub use sprite::*;
 
 mod missile;
 pub use missile::*;
+
+mod shooter;
+pub use shooter::*;

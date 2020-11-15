@@ -95,16 +95,14 @@ impl Client
         let player_id = self.client_id;
 
         if let Some(e) = self.find_player_entity_mut() {
-            if let Some(actor) = e.actor {
-                let mut vel = input.dpad;
-                vel = vel * actor.speed * delta;
-                if vel.magnitude() > 0.0 {
-                    events.push(Event::ForceMovement(e.id, vel));
-                }
+            let mut vel = input.dpad;
+            vel = vel * 2.0 * delta;
+            if vel.magnitude() > 0.0 {
+                events.push(Event::ForceMovement(e.id, vel));
+            }
 
-                if input.shoot {
-                    events.push(Event::ShootAt(e.id, input.mouse_world_pos));
-                }
+            if input.shoot {
+                events.push(Event::ShootAt(e.id, input.mouse_world_pos));
             }
             
         } else {

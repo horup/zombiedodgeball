@@ -1,7 +1,7 @@
 use cgmath::{Point2, Vector2};
 use gamestate::{DeltaSerializable, ID};
 
-use crate::{components::{Actor, Dodgeball, Missile, Player, Sprite}};
+use crate::{components::{Missile, Player, Shooter, Sprite}};
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Entity
@@ -12,10 +12,9 @@ pub struct Entity
     pub pos:Point2<f32>,
     pub vel:Vector2<f32>,
     pub sprite:Option<Sprite>,
-    pub actor:Option<Actor>,
     pub player:Option<Player>,
-    pub dodgeball:Option<Dodgeball>,
-    pub missile:Missile
+    pub missile:Missile,
+    pub shooter:Shooter
 }
 
 impl gamestate::Entity for Entity 
@@ -27,11 +26,10 @@ impl gamestate::Entity for Entity
             collidable:true,
             pos:Point2 {x:0.0, y:0.0},
             vel:Vector2 {x:0.0, y:0.0},
-            actor:None,
             sprite:None,
             player:None,
-            dodgeball:None,
-            missile:Missile::default()
+            missile:Missile::default(),
+            shooter:Shooter::default()
         }
     }
 
