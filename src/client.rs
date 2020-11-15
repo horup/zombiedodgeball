@@ -1,4 +1,4 @@
-use cgmath::Vector2;
+use cgmath::{InnerSpace, Point2, Vector2};
 use ggez::{Context, GameResult, event::{KeyCode, MouseButton}, graphics::{self, DrawParam, GlBackendSpec, ImageGeneric, Rect}, input::{keyboard, mouse}, timer};
 use uuid::Uuid;
 
@@ -21,7 +21,7 @@ pub struct Input
 {
     pub dpad:Vector2<f32>,
     pub shoot:bool,
-    pub mouse_pos:Vector2<f32>
+    pub mouse_world_pos:Point2<f32>
 }
 
 impl Default for Input
@@ -30,7 +30,7 @@ impl Default for Input
         Self {
             dpad:Vector2::new(0.0, 0.0),
             shoot:false,
-            mouse_pos:Vector2::new(0.0, 0.0)
+            mouse_world_pos:Point2::new(0.0, 0.0)
         }
     }
 }
@@ -72,7 +72,7 @@ impl Client
         input.dpad.x = if keyboard::is_key_pressed(ctx, KeyCode::D) {1.0} else {input.dpad.x};
         input.shoot = mouse::button_pressed(ctx, MouseButton::Left);
         let cursor = mouse::position(&ctx);
-        input.mouse_pos = Vector2::new(cursor.x / zoom, cursor.y / zoom);
+        input.mouse_world_pos = Point2::new(cursor.x / zoom, cursor.y / zoom);
         input
     }
 
@@ -98,8 +98,13 @@ impl Client
             if let Some(actor) = e.actor {
                 let mut vel = input.dpad;
                 vel = vel * actor.speed * delta;
-                let e = Event::ForceMovement(e.id, vel);//Event::PlayerMove(self.client_id, vel);
-                events.push(e);
+                if vel.magnitude() > 0.0 {
+                    events.push(Event::ForceMovement(e.id, vel));
+                }
+
+                if input.shoot {
+                    events.push(Event::ShootAt(e.id, input.mouse_world_pos));
+                }
             }
             
         } else {

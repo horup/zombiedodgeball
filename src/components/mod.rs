@@ -9,3 +9,6 @@ pub use player::*;
 
 mod sprite;
 pub use sprite::*;
+
+mod missile;
+pub use missile::*;
