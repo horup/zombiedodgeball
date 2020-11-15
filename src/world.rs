@@ -1,4 +1,5 @@
 use cgmath::{Point2, Vector2};
+use cgmath::prelude::*;
 use gamestate::{DeltaSerializable, ID};
 
 use crate::{components::{Missile, Player, Shooter, Sprite}};
@@ -61,6 +62,23 @@ impl World {
             time:0.0,
             entities:gamestate::Collection::default()
         }
+    }
+
+    pub fn spawn_missile(&mut self, pos:Point2<f32>, at:Point2<f32>) -> Option<&mut Entity> {
+        let e = self.entities.new_entity_replicated()?;
+        e.pos = pos;
+        let v = at - pos;
+        let v = v.normalize() * 10.0;
+        e.vel = v;
+        e.missile = Some(Missile {
+            ..Missile::default()
+        });
+        e.sprite = Some(Sprite {
+            x:2.0,
+            ..Sprite::default()
+        });
+        
+        Some(e)
     }
 }
 
