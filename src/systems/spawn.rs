@@ -30,10 +30,10 @@ pub fn step<F:FnMut(Event)>(state:&mut World, is_server:bool, event:&Event, push
                     // player entity does not exist, spawn him
                     let e = state.entities.new_entity_replicated().expect("could not player entity");
                     e.pos = Point2::new(7.0, 15.0);
-                    e.shooter = Shooter {
+                    e.shooter = Some(Shooter {
                         attached:true,
                         cooldown:0.0
-                    };
+                    });
                     e.player = Some(Player {client_id:*player_id, ..Player::default()});
                     e.sprite = Some(Sprite::default());
                     println!("spawning player entity {:?}", e.id);

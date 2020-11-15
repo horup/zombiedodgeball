@@ -13,8 +13,8 @@ pub struct Entity
     pub vel:Vector2<f32>,
     pub sprite:Option<Sprite>,
     pub player:Option<Player>,
-    pub missile:Missile,
-    pub shooter:Shooter
+    pub missile:Option<Missile>,
+    pub shooter:Option<Shooter>
 }
 
 impl gamestate::Entity for Entity 
@@ -28,8 +28,8 @@ impl gamestate::Entity for Entity
             vel:Vector2 {x:0.0, y:0.0},
             sprite:None,
             player:None,
-            missile:Missile::default(),
-            shooter:Shooter::default()
+            missile:None,
+            shooter:None
         }
     }
 
